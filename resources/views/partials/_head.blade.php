@@ -3,5 +3,7 @@
 <title>@yield('title')</title>
 
 <!-- STYLESHEET -->
-<!-- TAILWIND CDN -->
+<link rel="stylesheet" href="{{asset(css/app.css)}}">
 
+<!-- SCRIPT -->
+@yield('head-script')
