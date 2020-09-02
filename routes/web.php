@@ -20,3 +20,19 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+// Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
+//     Route::get('/login', 'Auth\LoginController@getLogin');
+//     Route::post('/login', 'Auth\LoginController@login');
+//     // Route::post('logout', 'Auth\LoginController@logout');
+// });
+/*============ADMIN============*/
+/*============ADMIN_LOGIN============*/
+Route::get('login', [ 'as' => 'login','prefix' => 'admin', 'uses' => 'Admin\Auth\LoginController@getLogin']);
+Route::post('login', [ 'as' => 'login','prefix' => 'admin', 'uses' => 'Admin\Auth\LoginController@login']);
+/*============ADMIN_REGISTER============*/
+Route::get('register',['as' => 'register','prefix' => 'admin','uses'=> 'Admin\Auth\RegisterController@getRegister']);
+Route::post('register',['as' => 'register','prefix' => 'admin','uses'=> 'Admin\Auth\RegisterController@postRegister']);
+/*============ADMIN_LOGOUT============*/
+Route::post('logout', [ 'as' => 'logout','prefix' => 'admin','uses' => 'Admin\Auth\LogoutController@getLogout']);
+/*============ADMIN_RESET_PASSWORD_WITH_EMAIL============*/
+
