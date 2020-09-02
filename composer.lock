@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22976acf39b96f1f47cb34e9db5d8d7d",
+    "content-hash": "fe5f9833eaa68fe07db2e5ce907953f4",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -421,6 +421,56 @@
                 "validator"
             ],
             "time": "2020-08-08T21:28:19+00:00"
+        },
+        {
+            "name": "ejarnutowski/laravel-api-key",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ejarnutowski/laravel-api-key.git",
+                "reference": "81ac0a4732d1a6b515f2d8ea6f4419aed7451393"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ejarnutowski/laravel-api-key/zipball/81ac0a4732d1a6b515f2d8ea6f4419aed7451393",
+                "reference": "81ac0a4732d1a6b515f2d8ea6f4419aed7451393",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [
+                        "ejarnutowski/laravel-api-key"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ejarnutowski\\LaravelApiKey\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Elliott Jarnutowski",
+                    "email": "e@jarno.co"
+                }
+            ],
+            "description": "Authorize requests to your Laravel application with API keys",
+            "keywords": [
+                "Api Key",
+                "Authentication",
+                "api",
+                "authorization",
+                "laravel"
+            ],
+            "time": "2019-09-16T20:19:02+00:00"
         },
         {
             "name": "fideloper/proxy",
