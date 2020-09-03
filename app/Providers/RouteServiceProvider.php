@@ -46,7 +46,10 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+        //CUSTOM
+        $this->mapHomeRoutes();
+        $this->mapStudentRoutes();
+        $this->mapEmployerRoutes();
     }
 
     /**
@@ -76,5 +79,19 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('api')
             ->namespace($this->namespace)
             ->group(base_path('routes/api.php'));
+    }
+
+    //CUSTOM
+    public function mapHomeRoutes()
+    {
+        Route::prefix('api')->middleware('api')->namespace($this->namespace)->group(base_path('routes/home.php'));
+    }
+    public function mapStudentRoutes()
+    {
+        Route::prefix('api')->middleware('api')->namespace($this->namespace)->group(base_path('routes/student.php'));
+    }
+    public function mapEmployerRoutes()
+    {
+        Route::prefix('api')->middleware('api')->namespace($this->namespace)->group(base_path('routes/employer.php'));
     }
 }
