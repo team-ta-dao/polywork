@@ -38,4 +38,7 @@ Route::post('logout', [ 'as' => 'logout','prefix' => 'admin','uses' => 'Admin\Au
 Route::get('changepassword',['as' => 'changepassword','prefix' => 'admin','uses'=> 'Admin\Auth\LoginController@getChangePassword']);
 Route::post('changepassword',['as' => 'changepassword','prefix' => 'admin','uses'=> 'Admin\Auth\LoginController@changePassword']);
 /*============ADMIN_RESET_PASSWORD_WITH_EMAIL============*/
-
+Route::post('/password/email', 'Admin\Auth\ForgotPasswordController@sendResetLinkEmail')->name('admin.password.email');
+Route::get('/password/reset', 'Admin\Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('/password/reset', 'Admin\Auth\ResetPasswordController@reset');
+Route::get('/password/reset/{token}', 'Admin\Auth\ResetPasswordController@showResetForm')->name('admin.password.reset');
