@@ -80,10 +80,9 @@ class LoginController extends Controller
         $password = $request->password;
         if(Hash::check($password, $admin->password)){
             if($request->password_new  == $request->password_confirm){
-                DB::table('admin')
-                ->updateOrInsert(
-                    ['password'=>Hash::make($request->password_new)])
-                ->where('email',$email);
+                $updateAdmin = Admin::find($admin->id);
+                $updateAdmin->password = Hash::make($request->password_new);
+                $updateAdmin->save();
                 return redirect()->back()->with('success', 'Thay đổi mật khẩu thành công');
             }else{
                 return redirect()->back()->with('status', 'Mật khẩu không giống nhau');
