@@ -7,7 +7,10 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Session;
+use App\Admin;
 class LoginController extends Controller
 {
     /*
@@ -60,7 +63,32 @@ class LoginController extends Controller
                 return redirect()->back()->with('status', 'Email hoặc Password không chính xác');
             }
             else {
+                Session::flash('email', $request->email);
+                $admin = Admin::query()->where('email',$request->email)->first();
+                Session::flash('username', $admin['username']);
                 return redirect('/');
             }
+    }
+    public function getChangePassword(){
+        return view('auth.passwords.resetpass');
+    }
+    public function changePassword(Request $request)
+    {
+        $email = Session::has('email');
+        $admin = Admin::query()->where('email',$email)->first();
+        $password = $request->password;
+        if(Hash::check($password, $admin->password)){
+            if($request->password_new  == $request->password_confirm){
+                DB::table('admin')
+                ->updateOrInsert(
+                    ['password'=>Hash::make($request->password_new)])
+                ->where('email',$email);
+                return redirect()->back()->with('success', 'Thay đổi mật khẩu thành công');
+            }else{
+                return redirect()->back()->with('status', 'Mật khẩu không giống nhau');
+            }
+        }else{
+            return redirect()->back()->with('status', 'Mật khẩu không chính xác');
+        }
     }
 }

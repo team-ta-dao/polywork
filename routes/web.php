@@ -34,5 +34,8 @@ Route::get('register',['as' => 'register','prefix' => 'admin','uses'=> 'Admin\Au
 Route::post('register',['as' => 'register','prefix' => 'admin','uses'=> 'Admin\Auth\RegisterController@postRegister']);
 /*============ADMIN_LOGOUT============*/
 Route::post('logout', [ 'as' => 'logout','prefix' => 'admin','uses' => 'Admin\Auth\LogoutController@getLogout']);
+/*============ADMIN_CHANGE_PASSWORD============*/
+Route::get('changepassword',['as' => 'changepassword','prefix' => 'admin','uses'=> 'Admin\Auth\LoginController@getChangePassword']);
+Route::post('changepassword',['as' => 'changepassword','prefix' => 'admin','uses'=> 'Admin\Auth\LoginController@changePassword']);
 /*============ADMIN_RESET_PASSWORD_WITH_EMAIL============*/
 
