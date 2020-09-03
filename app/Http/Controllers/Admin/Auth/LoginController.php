@@ -63,9 +63,10 @@ class LoginController extends Controller
                 return redirect()->back()->with('status', 'Email hoặc Password không chính xác');
             }
             else {
-                Session::flash('email', $request->email);
                 $admin = Admin::query()->where('email',$request->email)->first();
-                Session::flash('username', $admin['username']);
+                $request->session()->put('email', $request->email);
+                $request->session()->put('username', $admin['username']);
+
                 return redirect('/');
             }
     }
@@ -74,7 +75,7 @@ class LoginController extends Controller
     }
     public function changePassword(Request $request)
     {
-        $email = Session::has('email');
+        $email = $request->session()->get('email');
         $admin = Admin::query()->where('email',$email)->first();
         $password = $request->password;
         if(Hash::check($password, $admin->password)){
