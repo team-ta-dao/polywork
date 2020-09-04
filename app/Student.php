@@ -5,18 +5,21 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Student extends Authenticatable
+class Student extends Authenticatable implements JWTSubject
 {
     use Notifiable;
-
+    protected $table = 'student';
+    const UPDATED_AT = null;
+    const CREATED_AT = null;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'id','student_fullname', 'student_email', 'student_phone_num','student_bio','student_dob','student_address','student_cv_slug'	
     ];
 
     /**
@@ -25,15 +28,21 @@ class Student extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'remember_token',
     ];
 
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
     /**
-     * The attributes that should be cast to native types.
+     * Return a key value array, containing any custom claims to be added to the JWT.
      *
-     * @var array
+     * @return array
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }
