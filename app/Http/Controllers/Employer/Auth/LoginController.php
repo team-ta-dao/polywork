@@ -13,7 +13,7 @@ use JWTAuth;
 use JWTAuthException;
 use Illuminate\Support\Facades\DB;
 use Session;
-use App\Employer;
+use App\Company;
 class LoginController extends Controller
 {
     /*
@@ -59,8 +59,17 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'Please check username or password'], 401);
+                return response()->json(['error' => 'Vui lòng kiểm tra mật khẩu hoặc email của bạn'], 401);
             }
+        $company = new Company();
+        $company = Company::query()->where('email','=',$request->email)->first();
+        if($company['as_id']==4){
+            return response()->json(['error' => 'Tài khoản chưa được duyệt'], 401);
+        }elseif ($company['as_id']==3) {
+            return response()->json(['error' => 'Tài khoản đã bị khóa vui lòng liên hệ với nhà quản trị'], 401);
+        }elseif ($company['as_id']==2) {
+            return response()->json(['error' => 'Tài khoản đã bị đóng băng vui lòng liên hệ với nhà quản trị'], 401);
+        }
         } catch (JWTException $e) {
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
@@ -69,14 +78,14 @@ class LoginController extends Controller
     public function changePassword(Request $request)
     {
         $email = $request->email;
-        $employer = Employer::query()->where('email',$email)->first();
+        $employer = Company::query()->where('email',$email)->first();
         if(empty($employer)){
             return response()->json(['error' => 'Vui Lòng kiểm tra lại Email của bạn'], 401);
         }
         $password = $request->password;
         if(Hash::check($password, $admin->password)){
             if($request->password_new  == $request->password_confirm){
-                $updateEmployer = Employer::find($admin->id);
+                $updateEmployer = Company::find($admin->id);
                 $updateEmployer->password = Hash::make($request->password_new);
                 $updateEmployer->save();
                 return response()->json(['success' => 'Thay đổi mật khẩu thành công'], 200);

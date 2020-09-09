@@ -22,19 +22,18 @@ class StudentLogin extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'mssv' => 'required|string|max:20',
+            'username' => 'required|string|max:20',
+            'password' => 'required'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
-        $student= Student::where('id','=',$request->mssv)->first();
-        if(empty($student)){
-            return response()->json(['error' => 'Please check Mssv'], 401);
-        }
+        // $student= Student::where('id','=',$request->mssv)->first();
+        $credentials = $request->only('username', 'password');
         $token = null;
         try {
-            if (!$token = JWTAuth::fromUser($student)) {
-                return response()->json(['error' => 'Please check Mssv'], 401);
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'Please check username or password'], 401);
             }
         } catch (JWTException $e) {
             return response()->json(['error' => 'could_not_create_token'], 500);

@@ -10,9 +10,6 @@ class Admin extends Authenticatable
 {
     //
     use Notifiable;
-    const UPDATED_AT = null;
-    const CREATED_AT = null;
-
     protected $table = 'admin';
     protected $fillable = [
         'email','password','admin_fullname','admin_avatar','admin_dob','admin_phone_num'
