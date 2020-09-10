@@ -45,4 +45,11 @@ Route::get('/password/reset/{token}', 'Admin\Auth\ResetPasswordController@showRe
 /*============ADMIN_IMPORT_STUDENT============*/
 Route::get('/admin/import', 'Admin\AdminImportStudentController@show');
 Route::post('/admin/import', 'Admin\AdminImportStudentController@store');
+/*============ADMIN_CRUD_CATEGORY============*/
+/*============ADMIN_GET_ALL_CATEGORY============*/
+Route::get('admin/category', 'Admin\AdminCategoryController@index');
+Route::get('admin/getdata', 'Admin\AdminCategoryController@getdata')->name('getdata');
+/*============ADMIN_ADD_CATEGORY============*/
+Route::post('admin/category', 'Admin\AdminCategoryController@store')->name('admin.postdata');
+
 
