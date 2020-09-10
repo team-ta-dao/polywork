@@ -105,7 +105,6 @@
           type: "POST",
           dataType: 'json',
           success: function (data) {
-     
               $('#categoryFrom').trigger("reset");
               $('#ajaxModel').modal('hide');
               table.draw();
