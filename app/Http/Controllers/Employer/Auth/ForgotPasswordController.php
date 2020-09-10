@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Auth;
+namespace App\Http\Controllers\Employer\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Password;
-use App\Admin;
+use App\Company;
+use Illuminate\Http\Request;
+
 class ForgotPasswordController extends Controller
 {
     /*
@@ -28,16 +30,25 @@ class ForgotPasswordController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest:admin');
+        $this->middleware('guest:employer');
     }
 
     protected function broker()
     {
-      return Password::broker('admins');
+      return Password::broker('employer');
     }
 
-    public function showLinkRequestForm()
+
+     protected function sendResetLinkResponse(Request $request,string $response)
     {
-        return view('auth.passwords.email-admin');
+        return response(['message'=> $response]);
+
+    }
+
+
+    protected function sendResetLinkFailedResponse(Request $request,string $response)
+    {
+        return response(['error'=> $response], 422);
+
     }
 }

@@ -1,15 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Auth;
-
+namespace App\Http\Controllers\Employer\Auth;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Password;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Session;
+use App\Notifications\ResetPasswordRequestEmployer;
+use App\Employer;
+use App\PasswordReset;
+
 class ResetPasswordController extends Controller
 {
       /*
@@ -30,7 +34,7 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/admin/login';
+    // protected $redirectTo = '/admin/login';
 
     /**
      * Create a new controller instance.
@@ -39,23 +43,27 @@ class ResetPasswordController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest:admin');
+        $this->middleware('guest:employer');
     }
 
     protected function guard()
     {
-      return Auth::guard('admin');
+      return Auth::guard('employer');
     }
 
     protected function broker()
     {
-      return Password::broker('admins');
+      return Password::broker('employer');
+    }
+    protected function sendResetResponse(Request $request, $response)
+    {
+        return response(['message'=> trans($response)]);
+
     }
 
-    public function showResetForm(Request $request, $token = null)
+    protected function sendResetFailedResponse(Request $request, $response)
     {
-        return view('auth.passwords.reset')->with(
-            ['token' => $token, 'email' => $request->email]
-        );
+        return response(['error'=> trans($response)], 422);
     }
+
 }

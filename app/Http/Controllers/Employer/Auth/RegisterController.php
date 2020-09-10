@@ -1,16 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Auth;
-
+namespace App\Http\Controllers\Employer\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use App\Admin;
-// use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use JWTFactory;
+use JWTAuth;
+use JWTAuthException;
+use Illuminate\Support\Facades\DB;
 use Session;
+use App\Company;
 class RegisterController extends Controller
 {
     /*
@@ -37,12 +40,8 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
-        Auth::shouldUse('admin');
+        Auth::shouldUse('employer');
     }
-    public function getRegister() {
-        return view('auth/register');
-    }
-
     /**
      * Get a validator for an incoming registration request.
      *
@@ -53,7 +52,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:admin'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:employer'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ],
         [
@@ -74,16 +73,8 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\Admin
+     * @return \App\Company
      */
-    protected function create(array $data)
-    {
-        // return Admin::create([
-        //     'admin_fullname' => $data['name'],
-        //     'email' => $data['email'],
-        //     'password' => Hash::make($data['password']),
-        // ]);
-    }
     public function postRegister(Request $request) {
         // Kiểm tra dữ liệu vào
         $allRequest  = $request->all();	
@@ -91,22 +82,53 @@ class RegisterController extends Controller
      
         if ($validator->fails()) {
             // Dữ liệu vào không thỏa điều kiện sẽ thông báo lỗi
-            return redirect('admin\register')->withErrors($validator)->withInput();
+            return response()->json($validator->errors());
         } else {   
             // Dữ liệu vào hợp lệ sẽ thực hiện tạo người dùng dưới csdl
-            $admin = new Admin();
-            $admin->admin_fullname = $request->name;
-            $admin->email = $request->email;
-            $admin->password = bcrypt($request->password);
-            if($admin->save()) {
+            $company = new Company();
+            $company->name = $request->name;
+            $company->email = $request->email;
+            $company->password = bcrypt($request->password);
+            $company->as_id = '4';
+            if($company->save()) {
                 // Insert thành công sẽ hiển thị thông báo
-                Session::flash('success', 'Đăng ký thành viên thành công!');
-                return redirect('admin\login');
+                return response()->json([
+                    'status'=> 200,
+                    'message'=> 'Tạo tài khoản thành công bạn vui lòng chờ ít phút',
+                    'data'=>$employer
+                ]);
                 } else {
-                // Insert thất bại sẽ hiển thị thông báo lỗi
-                Session::flash('error', 'Đăng ký thành viên thất bại!');
-                return redirect('admin\register');
+                    return response()->json([
+                        'status'=> 401,
+                        'message'=> 'Tạo tài khoản thất bại',
+                    ]);
                 }
         }
+    }
+    public function adminIsRegisterEmployer(Request $request){
+          // Kiểm tra dữ liệu vào
+          $allRequest  = $request->all();	
+          $validator = $this->validator($allRequest);
+       
+          if ($validator->fails()) {
+              // Dữ liệu vào không thỏa điều kiện sẽ thông báo lỗi
+              return redirect('admin\register')->withErrors($validator)->withInput();
+          } else {   
+              // Dữ liệu vào hợp lệ sẽ thực hiện tạo người dùng dưới csdl
+              $company = new Company();
+              $company->name = $request->name;
+              $company->email = $request->email;
+              $company->password = bcrypt($request->password);
+              $company->as_id = '1';
+              if($admin->save()) {
+                  // Insert thành công sẽ hiển thị thông báo
+                  Session::flash('success', 'Đăng ký thành viên thành công!');
+                  return redirect('');
+                  } else {
+                  // Insert thất bại sẽ hiển thị thông báo lỗi
+                  Session::flash('error', 'Đăng ký thành viên thất bại!');
+                  return redirect('');
+                  }
+          }
     }
 }
