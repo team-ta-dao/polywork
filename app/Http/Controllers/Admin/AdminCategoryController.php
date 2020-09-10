@@ -14,18 +14,27 @@ class AdminCategoryController extends Controller
     public function __contrust(){
 
     }
-    public function index(){
-        if(request()->ajax()){
-        $category = Job_category::select('id','name');
-        return datatables()->of(Job_category::latest()->get())
-        ->addColumn('action',function($category){
-            return '<a href="#" class="btn btn-xs btn-primary edit" id="'.$category->id.'"><i class="glyphicon glyphicon-edit"></i> Edit</a><a href="#" class="btn btn-xs btn-danger delete" id="'.$category->id.'"><i class="glyphicon glyphicon-remove"></i> Delete</a>';
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+    public function index(Request $request)
+    {
+   
+        if ($request->ajax()) {
+            $data = Job_category::latest()->get();
+            return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row){
+   
+                           $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm editCategory">Edit</a>';
+   
+                           $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm deleteCategory">Delete</a>';
+    
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+      
+        return view('pages.category',compact('Job_category'));
     }
-        return view('pages.category');
-    }   
     public function show($id)
     {
 
@@ -38,12 +47,14 @@ class AdminCategoryController extends Controller
 
         return response()->json(['success'=>'Product saved successfully.']);
     }
-    public function update(Request $request, Article $article)
+    public function edit($id)
     {
-
+        $category = Job_category::find($id);
+        return response()->json($category);
     }
     public function destroy($id)
     {
-
+        Job_category::find($id)->delete();
+        return response()->json(['success'=>'Product deleted successfully.']);
     }
 }

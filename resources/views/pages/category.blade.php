@@ -15,7 +15,7 @@
 <body>
     
 <div class="container">
-    <a class="btn btn-success" href="javascript:void(0)" id="createNewProduct">Add Category</a>
+    <a class="btn btn-success" href="javascript:void(0)" id="addCategory">Add Category</a>
     <table class="table table-bordered data-table">
         <thead>
             <tr>
@@ -36,8 +36,8 @@
                 <h4 class="modal-title" id="modelHeading"></h4>
             </div>
             <div class="modal-body">
-                <form id="productForm" name="productForm" class="form-horizontal">
-                   <input type="hidden" name="product_id" id="product_id">
+                <form id="categoryFrom" name="categoryFrom" class="form-horizontal">
+                   <input type="hidden" name="category_id" id="category_id">
                     <div class="form-group">
                         <label for="category_name" class="col-sm-2 control-label">Name</label>
                         <div class="col-sm-12">
@@ -71,28 +71,27 @@
         ajax: "{{ route('category.index') }}",
         columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-            {data: 'category_name', name: 'category_name'},
+            {data: 'name', name: 'name'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
      
-    $('#createNewProduct').click(function () {
-        $('#saveBtn').val("create-product");
-        $('#product_id').val('');
-        $('#productForm').trigger("reset");
-        $('#modelHeading').html("Create New Product");
+    $('#addCategory').click(function () {
+        $('#saveBtn').val("createCategory");
+        $('#category_id').val('');
+        $('#categoryFrom').trigger("reset");
+        $('#modelHeading').html("Create New Category");
         $('#ajaxModel').modal('show');
     });
     
-    $('body').on('click', '.editProduct', function () {
-      var product_id = $(this).data('id');
-      $.get("{{ route('category.index') }}" +'/' + product_id +'/edit', function (data) {
-          $('#modelHeading').html("Edit Product");
+    $('body').on('click', '.editCategory', function () {
+      var category_id = $(this).data('id');
+      $.get("{{ route('category.index') }}" +'/' + category_id +'/edit', function (data) {
+          $('#modelHeading').html("Edit Category");
           $('#saveBtn').val("edit-user");
           $('#ajaxModel').modal('show');
-          $('#product_id').val(data.id);
-          $('#name').val(data.name);
-          $('#detail').val(data.detail);
+          $('#category_id').val(data.id);
+          $('#category_name').val(data.name);
       })
    });
     
@@ -101,13 +100,13 @@
         $(this).html('Sending..');
     
         $.ajax({
-          data: $('#productForm').serialize(),
+          data: $('#categoryFrom').serialize(),
           url: "{{ route('category.store') }}",
           type: "POST",
           dataType: 'json',
           success: function (data) {
      
-              $('#productForm').trigger("reset");
+              $('#categoryFrom').trigger("reset");
               $('#ajaxModel').modal('hide');
               table.draw();
          
@@ -119,14 +118,14 @@
       });
     });
     
-    $('body').on('click', '.deleteProduct', function () {
+    $('body').on('click', '.deleteCategory', function () {
      
-        var product_id = $(this).data("id");
+        var category_id = $(this).data("id");
         confirm("Are You sure want to delete !");
       
         $.ajax({
             type: "DELETE",
-            url: "{{ route('category.store') }}"+'/'+product_id,
+            url: "{{ route('category.store') }}"+'/'+category_id,
             success: function (data) {
                 table.draw();
             },
