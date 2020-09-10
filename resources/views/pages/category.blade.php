@@ -37,6 +37,7 @@
             </div>
             <div class="modal-body">
                 <form id="categoryFrom" name="categoryFrom" class="form-horizontal">
+                    <span id="form_output"></span>
                    <input type="hidden" name="category_id" id="category_id">
                     <div class="form-group">
                         <label for="category_name" class="col-sm-2 control-label">Name</label>
@@ -45,6 +46,7 @@
                         </div>
                     </div>
                     <div class="col-sm-offset-2 col-sm-10">
+                    <input type="hidden" name="button_action" id="button_action" value="insert" />
                      <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Save changes
                      </button>
                     </div>
@@ -79,6 +81,7 @@
     $('#addCategory').click(function () {
         $('#saveBtn').val("createCategory");
         $('#category_id').val('');
+        $('#button_action').val('insert');
         $('#categoryFrom').trigger("reset");
         $('#modelHeading').html("Create New Category");
         $('#ajaxModel').modal('show');
@@ -88,7 +91,8 @@
       var category_id = $(this).data('id');
       $.get("{{ route('category.index') }}" +'/' + category_id +'/edit', function (data) {
           $('#modelHeading').html("Edit Category");
-          $('#saveBtn').val("edit-user");
+          $('#saveBtn').html("Save changes");
+          $('#button_action').val('update');
           $('#ajaxModel').modal('show');
           $('#category_id').val(data.id);
           $('#category_name').val(data.name);
@@ -96,20 +100,27 @@
    });
     
     $('#saveBtn').click(function (e) {
-        e.preventDefault();
+        e.preventDefault();    
         $(this).html('Sending..');
-    
         $.ajax({
           data: $('#categoryFrom').serialize(),
           url: "{{ route('category.store') }}",
           type: "POST",
           dataType: 'json',
           success: function (data) {
-     
-              $('#categoryFrom').trigger("reset");
-              $('#ajaxModel').modal('hide');
-              table.draw();
-         
+            if(data.error != null)
+            {
+                console.log(data.error);
+                $('#saveBtn').html('Save changes');
+                var error_html = '';
+                error_html += '<div class="alert alert-danger">'+data.error+'</div>';
+                $('#form_output').html(error_html);
+                return false;
+            }else{
+                $('#categoryFrom').trigger("reset");
+                $('#ajaxModel').modal('hide');
+                table.draw();
+            }
           },
           error: function (data) {
               console.log('Error:', data);
