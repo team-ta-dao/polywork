@@ -15,7 +15,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        PasswordReset::class => [
+        Registered::class => [
             SendEmailVerificationNotification::class,
         ],
     ];
