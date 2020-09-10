@@ -47,9 +47,8 @@ Route::get('/admin/import', 'Admin\AdminImportStudentController@show');
 Route::post('/admin/import', 'Admin\AdminImportStudentController@store');
 /*============ADMIN_CRUD_CATEGORY============*/
 /*============ADMIN_GET_ALL_CATEGORY============*/
-Route::get('admin/category', 'Admin\AdminCategoryController@index');
-Route::get('admin/getdata', 'Admin\AdminCategoryController@getdata')->name('getdata');
+Route::resource('/category', 'Admin\AdminCategoryController');
 /*============ADMIN_ADD_CATEGORY============*/
-Route::post('admin/category', 'Admin\AdminCategoryController@store')->name('admin.postdata');
+Route::post('admin/postdata', 'Admin\AdminCategoryController@store')->name('admin.category.postdata');
 
 
