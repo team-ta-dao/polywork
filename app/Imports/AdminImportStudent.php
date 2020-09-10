@@ -27,7 +27,8 @@ ToCollection,
 WithHeadingRow,
 SkipsOnError,
 SkipsOnFailure,
-WithChunkReading
+WithChunkReading,
+WithValidation
 {
     /**
     * @param array $row
@@ -52,7 +53,7 @@ WithChunkReading
     {
             return [
                 '*.email' => ['email', 'unique:student,email'],
-                '*.MSSV' => ['MSSV', 'unique:student,MSSV'],
+                '*.username' => ['username', 'unique:student,username'],
             ];
     }
     public function chunkSize(): int
