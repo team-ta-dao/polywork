@@ -1,18 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Auth;
-
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ResetsPasswords;
-use Illuminate\Http\Request;
-use Password;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Session;
+
 class ResetPasswordController extends Controller
 {
-      /*
+    /*
     |--------------------------------------------------------------------------
     | Password Reset Controller
     |--------------------------------------------------------------------------
@@ -30,32 +26,5 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/admin/login';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest:admin');
-    }
-
-    protected function guard()
-    {
-      return Auth::guard('admin');
-    }
-
-    protected function broker()
-    {
-      return Password::broker('admins');
-    }
-
-    public function showResetForm(Request $request, $token = null)
-    {
-        return view('auth.passwords.reset')->with(
-            ['token' => $token, 'email' => $request->email]
-        );
-    }
+    protected $redirectTo = RouteServiceProvider::HOME;
 }

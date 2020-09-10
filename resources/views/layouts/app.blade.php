@@ -66,13 +66,6 @@
                                     </form>
                                 </div>
                             </li>
-                            <li>
-                            @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('changepassword') }}">
-                                        {{ __('Reset Your password') }}
-                                    </a>
-                            @endif
-                            </li>
                         @endguest
                     </ul>
                 </div>
