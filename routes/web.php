@@ -42,3 +42,10 @@ Route::post('/password/email', 'Admin\Auth\ForgotPasswordController@sendResetLin
 Route::get('/password/reset', 'Admin\Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
 Route::post('/password/reset', 'Admin\Auth\ResetPasswordController@reset');
 Route::get('/password/reset/{token}', 'Admin\Auth\ResetPasswordController@showResetForm')->name('admin.password.reset');
+/*============ADMIN_IMPORT_STUDENT============*/
+Route::get('/admin/import', 'Admin\AdminImportStudentController@show');
+Route::post('/admin/import', 'Admin\AdminImportStudentController@store');
+/*============ADMIN_CRUD_CATEGORY============*/
+Route::namespace('Admin')->prefix('admin')->group(function () {
+Route::resource('/category', 'AdminCategoryController');
+});

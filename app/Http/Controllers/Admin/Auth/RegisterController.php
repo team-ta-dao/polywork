@@ -95,7 +95,7 @@ class RegisterController extends Controller
         } else {   
             // Dữ liệu vào hợp lệ sẽ thực hiện tạo người dùng dưới csdl
             $admin = new Admin();
-            $admin->admin_fullname = $request->name;
+            $admin->fullname = $request->name;
             $admin->email = $request->email;
             $admin->password = bcrypt($request->password);
             if($admin->save()) {
