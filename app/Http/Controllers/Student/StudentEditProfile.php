@@ -7,7 +7,9 @@ use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use League\CommonMark\Inline\Element\Image;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+
 
 class StudentEditProfile extends Controller
 {
@@ -47,27 +49,20 @@ class StudentEditProfile extends Controller
         if(!$request->hasFile('file')) {
             return response()->json(['upload_file_not_found'], 400);
         }
-    
         $allowedfileExtension=['pdf','jpg','png','docx','xlsx'];
         $files = $request->file('file'); 
         $errors = [];
-    
         foreach ($files as $file) {      
-    
             $extension = $file->getClientOriginalExtension();
-    
             $check = in_array($extension,$allowedfileExtension);
-    
             if($check) {
                 foreach($request->file as $mediaFiles) {
                     $media = new CV();
                     $media_ext = $mediaFiles->getClientOriginalName();
                     $media_no_ext = pathinfo($media_ext, PATHINFO_FILENAME);
-                    $filePath = $file->storeAs('uploads', $media_ext, 'public');
+                    $filePath = $file->storeAs('uploads/cv/'.Auth::user()->username.'', $media_ext, 'public');
                     $mFiles = $media_no_ext . '-' . uniqid() . '.' . $extension;
-                    Image::make($file)->resize(197, 137)->save( public_path('/uploads/CV/'.Auth::user()->username.'/' . $filename ) );
-                    $mediaFiles->move(public_path().'/images/', $mFiles);
-                    $media->title = $media_ext;
+                    $media->title = $media_no_ext;
                     $media->slug = $filePath;
                     $media->student_id = Auth::user()->id;
                     $media->save();
@@ -75,23 +70,8 @@ class StudentEditProfile extends Controller
             } else {
                 return response()->json(['invalid_file_format'], 422);
             }
-    
             return response()->json(['file_uploaded'], 200);
-    
         }
-        // $fileModel = new CV;
-        // if($request->filled('file')) {
-        //     foreach($request->file('file') as $file){
-        //         $fileName = time().'_'.$file->getClientOriginalName();
-        //         $filePath = $file->storeAs('uploads', $fileName, 'public');
-        //         $fileModel->title = time().'_'.$file->getClientOriginalName();
-        //         Image::make($file)->resize(197, 137)->save( public_path('/uploads/CV/'.Auth::user()->username.'/' . $filename ) );
-        //         $fileModel->slug = '/storage/' . $filePath;
-        //         $fileModel->student_id = Auth::user()->id;
-        //         $fileModel->save();
-        //     }
-        //     return ["success" => "Your media file has been successfully uploaded"];
-        // }
 	}
 
     /**
