@@ -18,4 +18,6 @@ Route::post('student/login', 'Student\StudentLogin@login');
 Route::group(['prefix' => 'student','middleware' => ['assign.guard:web','jwt.auth']], function(){
     Route::get('/logout', 'Student\StudentLogin@logout');
     Route::get('/profile', 'Student\StudentLogin@getAuthenticatedUser');
+    Route::post('/editprofile', 'Student\StudentEditProfile@store');
 }); 
+/*============STUDENTS_EDIT_PROFILE============*/
