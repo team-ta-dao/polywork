@@ -33,7 +33,7 @@ class AdminCategoryController extends Controller
                     ->make(true);
         }
       
-        return view('pages.category',compact('Job_category'));
+        return view('pages.category');
     }
     public function show($id)
     {
@@ -41,11 +41,34 @@ class AdminCategoryController extends Controller
     }
     public function store(Request $request)
     {
-        Job_category::updateOrCreate(
-        ['id' => $request->product_id],
-        ['name' => $request->category_name, 'slug' =>  str_slug($request->category_name,'-')]);        
-
-        return response()->json(['success'=>'Product saved successfully.']);
+        $validation = Validator::make($request->all(), [
+            'category_name'=> 'required',
+        ]);
+        $error_array = array();
+        $success_output = '';
+        if ($validation->fails())
+        {
+            foreach ($validation->messages()->getMessages() as $field_name => $messages)
+            {
+                $error_array[] = $messages; 
+                return response()->json(['error'=>$error_array]);
+            }
+        }
+        if($request->button_action == 'insert'){
+            $category = Job_category::query()->where('name',$request->category_name)->first();
+            if(!empty($category)){
+                return response()->json(['error'=>'Dữ liệu của bạn đã có ngành nghề '. $request->category_name .' này rồi ']);
+            }
+            Job_category::updateOrCreate(
+            ['id' => $request->category_id],
+            ['name' => $request->category_name, 'slug' =>  str_slug($request->category_name,'-')]);
+            return response()->json(['success'=>'Category saved successfully.']);
+        }else{
+            Job_category::updateOrCreate(
+            ['id' => $request->category_id],
+            ['name' => $request->category_name, 'slug' =>  str_slug($request->category_name,'-')]);
+            return response()->json(['success'=>'Category saved successfully.']);
+        }
     }
     public function edit($id)
     {
@@ -55,6 +78,6 @@ class AdminCategoryController extends Controller
     public function destroy($id)
     {
         Job_category::find($id)->delete();
-        return response()->json(['success'=>'Product deleted successfully.']);
+        return response()->json(['success'=>'Category deleted successfully.']);
     }
 }
