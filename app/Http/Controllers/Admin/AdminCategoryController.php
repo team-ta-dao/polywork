@@ -54,14 +54,21 @@ class AdminCategoryController extends Controller
                 return response()->json(['error'=>$error_array]);
             }
         }
-        $category = Job_category::query()->where('name',$request->category_name)->first();
-        if(!empty($category)){
-            return response()->json(['error'=>'Dữ liệu của bạn đã có ngành nghề '. $request->category_name .' này rồi ']);
+        if($request->button_action == 'insert'){
+            $category = Job_category::query()->where('name',$request->category_name)->first();
+            if(!empty($category)){
+                return response()->json(['error'=>'Dữ liệu của bạn đã có ngành nghề '. $request->category_name .' này rồi ']);
+            }
+            Job_category::updateOrCreate(
+            ['id' => $request->category_id],
+            ['name' => $request->category_name, 'slug' =>  str_slug($request->category_name,'-')]);
+            return response()->json(['success'=>'Category saved successfully.']);
+        }else{
+            Job_category::updateOrCreate(
+            ['id' => $request->category_id],
+            ['name' => $request->category_name, 'slug' =>  str_slug($request->category_name,'-')]);
+            return response()->json(['success'=>'Category saved successfully.']);
         }
-        Job_category::updateOrCreate(
-        ['id' => $request->category_id],
-        ['name' => $request->category_name, 'slug' =>  str_slug($request->category_name,'-')]);
-        return response()->json(['success'=>'Category saved successfully.']);
     }
     public function edit($id)
     {

@@ -49,3 +49,6 @@ Route::post('/admin/import', 'Admin\AdminImportStudentController@store');
 Route::namespace('Admin')->prefix('admin')->group(function () {
 Route::resource('/category', 'AdminCategoryController');
 });
+Route::namespace('Admin')->prefix('admin')->group(function () {
+    Route::resource('/tag', 'AdminTagController');
+});

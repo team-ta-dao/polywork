@@ -15,12 +15,12 @@
 <body>
     
 <div class="container">
-    <a class="btn btn-success" href="javascript:void(0)" id="addCategory">Add Category</a>
+    <a class="btn btn-success" href="javascript:void(0)" id="addTag">Add Skill Tag</a>
     <table class="table table-bordered data-table">
         <thead>
             <tr>
-                <th>No</th>
-                <th>Name</th>
+                <th>Category Name</th>
+                <th>Tag Name</th>
                 <th width="280px">Action</th>
             </tr>
         </thead>
@@ -36,13 +36,23 @@
                 <h4 class="modal-title" id="modelHeading"></h4>
             </div>
             <div class="modal-body">
-                <form id="categoryFrom" name="categoryFrom" class="form-horizontal">
+                <form id="TagFrom" name="TagFrom" class="form-horizontal">
                     <span id="form_output"></span>
-                   <input type="hidden" name="category_id" id="category_id">
+                   <input type="hidden" name="tag_id" id="tag_id">
                     <div class="form-group">
-                        <label for="category_name" class="col-sm-2 control-label">Name</label>
+                        <label for="tag_name" class="col-sm-2 control-label">Name</label>
                         <div class="col-sm-12">
-                            <input type="text" class="form-control" id="category_name" name="category_name" placeholder="Enter Name" value="" maxlength="50" required="">
+                            <input type="text" class="form-control" id="tag_name" name="tag_name" placeholder="Enter Name" value="" maxlength="50" required="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="category_name">Tag</label>
+                        <div class="col-sm-12">
+                        <select class="form-control" id="category_name" name="category_name">
+                        @foreach($categories as $category)
+                            <option value="{{$category->id}}">{{$category->name}}</option>
+                        @endforeach
+                        </select>
                         </div>
                     </div>
                     <div class="col-sm-offset-2 col-sm-10">
@@ -70,41 +80,41 @@
     var table = $('.data-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('category.index') }}",
+        ajax: "{{ route('tag.index') }}",
         columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-            {data: 'name', name: 'name'},
+            {data: 'st_name', name: 'st_name'},
+            {data: 'TagOfCategory', name: 'TagOfCategory'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
      
-    $('#addCategory').click(function () {
-        $('#saveBtn').val("createCategory");
-        $('#category_id').val('');
+    $('#addTag').click(function () {
+        $('#saveBtn').val("createTag");
+        $('#Tag_id').val('');
         $('#button_action').val('insert');
-        $('#categoryFrom').trigger("reset");
-        $('#modelHeading').html("Create New Category");
+        $('#TagFrom').trigger("reset");
+        $('#modelHeading').html("Create New Tag");
         $('#ajaxModel').modal('show');
     });
-    
-    $('body').on('click', '.editCategory', function () {
-      var category_id = $(this).data('id');
-      $.get("{{ route('category.index') }}" +'/' + category_id +'/edit', function (data) {
-          $('#modelHeading').html("Edit Category");
-          $('#saveBtn').html("Save changes");
-          $('#button_action').val('update');
-          $('#ajaxModel').modal('show');
-          $('#category_id').val(data.id);
-          $('#category_name').val(data.name);
-      })
+    $('body').on('click', '.editTag', function () {
+      var Tag_id = $(this).data('id');
+      $.get("{{ route('tag.index') }}" +'/' + Tag_id +'/edit', function (data) {
+        $('#modelHeading').html("Edit Tag");
+        $('#saveBtn').html("Save changes");
+        $('#button_action').val('update');
+        $('#ajaxModel').modal('show');
+        $('#tag_id').val(data.id);
+        $('#tag_name').val(data.st_name);
+        $("#category_name").find('option:selected').removeAttr("selected");
+        $("#category_name").find('option[value="' + data.cat_id + '"]').attr("selected",true);
+    })
    });
-    
-    $('#saveBtn').click(function (e) {
+$('#saveBtn').click(function (e) {
         e.preventDefault();    
         $(this).html('Sending..');
         $.ajax({
-          data: $('#categoryFrom').serialize(),
-          url: "{{ route('category.store') }}",
+          data: $('#TagFrom').serialize(),
+          url: "{{ route('tag.store') }}",
           type: "POST",
           dataType: 'json',
           success: function (data) {
@@ -117,7 +127,7 @@
                 $('#form_output').html(error_html);
                 return false;
             }else{
-                $('#categoryFrom').trigger("reset");
+                $('#TagFrom').trigger("reset");
                 $('#ajaxModel').modal('hide');
                 table.draw();
             }
@@ -129,14 +139,14 @@
       });
     });
     
-    $('body').on('click', '.deleteCategory', function () {
+    $('body').on('click', '.deleteTag', function () {
      
-        var category_id = $(this).data("id");
+        var Tag_id = $(this).data("id");
         confirm("Are You sure want to delete !");
       
         $.ajax({
             type: "DELETE",
-            url: "{{ route('category.store') }}"+'/'+category_id,
+            url: "{{ route('tag.store') }}"+'/'+Tag_id,
             success: function (data) {
                 table.draw();
             },
