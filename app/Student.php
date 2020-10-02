@@ -19,7 +19,7 @@ class Student extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'fullname','username', 'email', 'bio','address','phone_num','password'
+        'fullname','username', 'email', 'bio','address','phone_num','password','student_code'
     ];
 
     /**

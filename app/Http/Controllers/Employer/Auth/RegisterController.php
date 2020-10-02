@@ -82,7 +82,7 @@ class RegisterController extends Controller
      
         if ($validator->fails()) {
             // Dữ liệu vào không thỏa điều kiện sẽ thông báo lỗi
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(),401);
         } else {   
             // Dữ liệu vào hợp lệ sẽ thực hiện tạo người dùng dưới csdl
             $company = new Company();
@@ -123,11 +123,11 @@ class RegisterController extends Controller
               if($admin->save()) {
                   // Insert thành công sẽ hiển thị thông báo
                   Session::flash('success', 'Đăng ký thành viên thành công!');
-                  return redirect('');
+                  return redirect('/company');
                   } else {
                   // Insert thất bại sẽ hiển thị thông báo lỗi
                   Session::flash('error', 'Đăng ký thành viên thất bại!');
-                  return redirect('');
+                  return redirect('/company');
                   }
           }
     }

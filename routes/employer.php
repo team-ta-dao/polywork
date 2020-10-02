@@ -23,6 +23,7 @@ Route::group(['prefix' => 'employer','namespace'=>'Employer','middleware' => ['a
     Route::post('/changepassword', 'Auth\LoginController@changePassword');
     /*============EMPLOYER_LOGOUT============*/
     Route::get('/logout', 'Auth\LogoutController@logout');
+    Route::get('/profile', 'Auth\LoginController@getAuthenticatedUser');
 });
 /*============EMLOYER_RESET_PASSWORD_WITH_EMAIL============*/
 Route::post('employer/password/email', 'Employer\Auth\ForgotPasswordController@sendResetLinkEmail');

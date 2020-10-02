@@ -66,8 +66,7 @@ class LoginController extends Controller
                 $admin = Admin::query()->where('email',$request->email)->first();
                 $request->session()->put('email', $request->email);
                 $request->session()->put('username', $admin['username']);
-
-                return redirect('/');
+                return redirect('/dashboard');
             }
     }
     public function getChangePassword(){

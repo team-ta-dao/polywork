@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Student;
 
 use App\CV;
 use Validator;
+use App\Student;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 
 class StudentEditProfile extends Controller
@@ -26,6 +27,9 @@ class StudentEditProfile extends Controller
     public function index()
     {
         //
+        if(Auth::check()){
+            return response()->json(['status'=>true,'response'=>Auth::user(),'message'=>'check-sucsecc'],200);
+        }
     }
 
     /**
@@ -46,34 +50,7 @@ class StudentEditProfile extends Controller
      */
     public function store(Request $request)
     {
-        if(!$request->hasFile('file')) {
-            return response()->json(['upload_file_not_found'], 400);
-        }
-        $allowedfileExtension=['pdf','jpg','png','docx','xlsx'];
-        $files = $request->file('file'); 
-        $errors = [];
-        foreach ($files as $file) {      
-            $extension = $file->getClientOriginalExtension();
-            $check = in_array($extension,$allowedfileExtension);
-            if($check) {
-                foreach($request->file as $mediaFiles) {
-                    $media = new CV();
-                    $media_ext = $mediaFiles->getClientOriginalName();
-                    $media_no_ext = pathinfo($media_ext, PATHINFO_FILENAME);
-                    $filePath = $file->storeAs('uploads/cv/'.Auth::user()->username.'', $media_ext, 'public');
-                    $mFiles = $media_no_ext . '-' . uniqid() . '.' . $extension;
-                    $media->title = $media_no_ext;
-                    $media->slug = $filePath;
-                    $media->student_id = Auth::user()->id;
-                    $media->save();
-                }
-            } else {
-                return response()->json(['invalid_file_format'], 422);
-            }
-            return response()->json(['file_uploaded'], 200);
-        }
-	}
-
+    }
     /**
      * Display the specified resource.
      *
@@ -103,9 +80,64 @@ class StudentEditProfile extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         //
+        if(Auth::user()->email === $request->email){
+            $validator = Validator::make($request->all(), [
+                'email' => 'nullable|string|email|max:50',
+                'bio'=> 'nullable|string|max:255',
+                'fullname' => 'nullable|string|max:100',
+                'address' => 'nullable|string|max:100',
+                'phone_num' => 'nullable|string|max:12',
+            ]);
+        }
+        $validator = Validator::make($request->all(), [
+            'email' => 'nullable|string|unique|email|max:50',
+            'bio'=> 'nullable|string|max:255',
+            'fullname' => 'nullable|string|max:100',
+            'address' => 'nullable|string|max:100',
+            'phone_num' => 'nullable|string|max:12',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(),401);
+        }
+        $updateProfile = Student::find(Auth::user()->id);
+        $updateProfile->fullname = $request->fullname;
+        $updateProfile->email = $request->email;
+        $updateProfile->bio = $request->bio;
+        $updateProfile->address = $request->phone_num;
+        $updateProfile->phone_num = $request->phone_num;
+        if($request->hasFile('file')) {
+            $allowedfileExtension=['pdf','jpg','png','docx','xlsx'];
+            $files = $request->file('file'); 
+            $errors = [];
+            foreach ($files as $file) {      
+                $extension = $file->getClientOriginalExtension();
+                $check = in_array($extension,$allowedfileExtension);
+                if($check) {
+                    foreach($request->file as $mediaFiles) {
+                        $file = new CV();
+                        $file_ext = $mediaFiles->getClientOriginalName();
+                        $file_no_ext = pathinfo($file_ext, PATHINFO_FILENAME);
+                        $filePath = $mediaFiles->storeAs('uploads/cv/'.Auth::user()->student_code.'', $file_ext, 'public');
+                        $mFiles = $file_no_ext . '-' . uniqid() . '.' . $extension;
+                        $file->title = $file_no_ext;
+                        $file->slug = $filePath;
+                        $file->student_id = Auth::user()->id;
+                        $file->save();
+                    }
+                } else {
+                    return response()->json(['invalid_file_format'], 422);
+                }
+                return response()->json(['file_uploaded'], 200);
+            }
+        }
+        if($updateProfile->save()){
+            return response()->json(['success' => 'success update profile'], 200);
+        }else{
+            return response()->json(['error' => 'no success'], 200);
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Employer;
+use App\Job_category;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -19,7 +20,7 @@ class Company extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'email','password', 'name', 'address','cover_img','desc','slogan'
+        'email','password', 'name', 'address','cover_img','desc','slogan','id'
     ];
 
     /**
@@ -41,10 +42,15 @@ class Company extends Authenticatable implements JWTSubject
      *
      * @return array
      */
-    public function employer()
+    // public function belongsTo()
+    // {
+    // 	return $this->hasOne(Employer::class);
+    // }
+    public function CategoryCompany()
     {
-    	return $this->hasMany(Employer::class);
+        return $this->hasMany(Job_category::class, 'jc_id');
     }
+    
     public function getJWTCustomClaims()
     {
         return [];
@@ -53,5 +59,4 @@ class Company extends Authenticatable implements JWTSubject
     {
         $this->notify(new ResetPasswordRequestEmployer($token));
     }
-
 }

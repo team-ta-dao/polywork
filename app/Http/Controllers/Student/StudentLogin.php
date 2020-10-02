@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Student;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use JWTFactory;
 use JWTAuth;
 use JWTAuthException;
@@ -26,7 +27,7 @@ class StudentLogin extends Controller
             'password' => 'required'
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(),401);
         }
         // $student= Student::where('id','=',$request->mssv)->first();
         $credentials = $request->only('username', 'password');
@@ -40,10 +41,20 @@ class StudentLogin extends Controller
         }
         return response()->json(compact('token'));
     }
-    public function getAuthenticatedUser()
-    {
-    if(Auth::check()){
-        return response()->json(['status'=>true,'response'=>Auth::user(),'message'=>'check-sucsecc'],200);
-    }
+    public function UserisRessetPassword(Request $request){
+        $student_id = Auth::user()->id;
+        $student = Student::query()->where('id',$student_id)->first();
+        if(Hash::check($request->password, $student->password)){
+            if($request->password_new  == $request->password_confirm){
+                $updatePasswordStudent = Student::find($student_id);
+                $updatePasswordStudent->password = Hash::make($request->password_new);
+                $updatePasswordStudent->save();
+                return response()->json(['success' => 'Thay đổi mật khẩu thành công'], 200);
+            }else{
+                return response()->json(['error' => 'Mật khẩu không giống nhau'], 401);
+            }
+        }else{
+            return response()->json(['error' => 'Mật khẩu của bạn không đúng'], 401);
+        }
     }
 }
