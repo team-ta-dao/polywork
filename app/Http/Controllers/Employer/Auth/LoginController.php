@@ -52,7 +52,7 @@ class LoginController extends Controller
             'password'=> 'required'
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(),401);
         }
         $token = null;
         // $remember = $request->has('remember') ? true : false;

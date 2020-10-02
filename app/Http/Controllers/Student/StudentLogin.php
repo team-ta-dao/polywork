@@ -26,7 +26,7 @@ class StudentLogin extends Controller
             'password' => 'required'
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(),401);
         }
         // $student= Student::where('id','=',$request->mssv)->first();
         $credentials = $request->only('username', 'password');

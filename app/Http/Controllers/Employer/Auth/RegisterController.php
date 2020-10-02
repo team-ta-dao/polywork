@@ -82,7 +82,7 @@ class RegisterController extends Controller
      
         if ($validator->fails()) {
             // Dữ liệu vào không thỏa điều kiện sẽ thông báo lỗi
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(),401);
         } else {   
             // Dữ liệu vào hợp lệ sẽ thực hiện tạo người dùng dưới csdl
             $company = new Company();
