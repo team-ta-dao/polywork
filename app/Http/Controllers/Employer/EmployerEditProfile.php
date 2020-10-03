@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Student;
+namespace App\Http\Controllers\Employer;
 
-use App\Company;
 use Validator;
+use App\Company;
 use App\Employer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 
-class StudentEditProfile extends Controller
+class EmployerEditProfile extends Controller
 {
     public function __construct()
     {
@@ -119,39 +120,49 @@ class StudentEditProfile extends Controller
         if($request->hasFile('avatar')) {
             $allowedfileExtension=['jpeg','jpg','png'];
             $files = $request->file('avatar'); 
-            $errors = [];
-            foreach ($files as $file) {      
-                $extension = $file->getClientOriginalExtension();
-                $check = in_array($extension,$allowedfileExtension);
-                if($check) {
-                    foreach($request->file as $mediaFiles) {
-                        $file_ext = $mediaFiles->getClientOriginalName();
-                        $file_no_ext = pathinfo($file_ext, PATHINFO_FILENAME);
-                        $filePath = $mediaFiles->storeAs('uploads/company/'.str_slug($request->company_name,'-').'', $file_ext, 'public');
-                        $mFiles = $file_no_ext . '-' . uniqid() . '.' . $extension;
-                        $updateProfile->avatar = $file_ext;
-                    }
-                } else {
+            $extension = $files->getClientOriginalExtension();
+            $check = in_array($extension,$allowedfileExtension);
+            if($check) {
+                $file_ext = $files->getClientOriginalName();
+                Image::make($files)->resize(300, 300)->save( public_path('uploads/company/'.str_slug($request->company_name,'-').'/'.$filename));
+                $updateProfile->avatar = $file_ext;
+            } else {
+                return response()->json(['invalid_file_format'], 422);
+            }
+        }
+        if($request->fullname_employer){
+            $validator = Validator::make($request->all(), [
+                'email_employer' => 'nullable|string|email|max:50',
+                'fullname_employer' => 'nullable|string|max:100',
+                'phone_num_employer' => 'nullable|string|max:11',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(),401);
+            }
+            $employer = new Employer;
+            $employer->company_id = Auth::user()->id;
+            $employer->fullname = $request->fullname_employer;
+            $employer->email = $request->email_employer;
+            $employer->phone_num = $request->phone_num_employer;
+            if($request->hasFile('avatar_employer')){
+                $avatar_employer = $request->file('avatar_employer');
+                $allowedfileExtension=['jpeg','jpg','png'];
+                $extension_employer = $avatar_employer->getClientOriginalExtension();
+                $check_employer = in_array($extension_employer,$allowedfileExtension);
+                if($check_employer){
+                    $file_ext_employer = $avatar_employer->getClientOriginalName();
+                    Image::make($avatar_employer)->resize(300, 300)->save(public_path('uploads/company/'.str_slug($request->company_name,'-').'/'.str_slug($request->fullname,'-').'/'.$filename));
+                    $employer->phone_num = $file_ext_employer;
+                    $employer->save();
+                }else{
                     return response()->json(['invalid_file_format'], 422);
                 }
-                return response()->json(['file_uploaded'], 200);
             }
         }
         if($updateProfile->save()){
             return response()->json(['success' => 'success update profile'], 200);
         }else{
             return response()->json(['error' => 'no success'], 200);
-        }
-        if($request->employer){
-            $employer = new Employer;
-            $employer->company_id = Auth::user()->id;
-            $employer->fullname = $request->fullname;
-            $employer->email = $request->email;
-            $employer->phone_num = $request->phone_num;
-            if($request->hasFile('avatar_employer')){
-                $avatar_employer = $request->file('avatar_employer');
-                Image::make($avatar)->resize(300, 300)->save(public_path('/uploads/avatars/'.$filename));
-            }
         }
     }
 
