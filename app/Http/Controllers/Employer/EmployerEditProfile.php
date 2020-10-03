@@ -7,6 +7,7 @@ use App\Company;
 use App\Employer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -29,7 +30,9 @@ class EmployerEditProfile extends Controller
     {
         //
         if(Auth::check()){
-            return response()->json(['status'=>true,'response'=>Auth::user(),'message'=>'check-sucsecc'],200);
+            $company = new Company;
+            $output = $company->getDetail(Auth::user()->id);
+            return response()->json(['status'=>true,'response'=>$output,'message'=>'check-sucsecc'],200);
         }
     }
 
@@ -83,28 +86,21 @@ class EmployerEditProfile extends Controller
      */
     public function update(Request $request)
     {
-        //
         if(Auth::user()->email === $request->email){
             $validator = Validator::make($request->all(), [
-                'email' => 'nullable|string|email|max:50',
+                'email' => 'nullable|string|email|max:100',
                 'slogan'=> 'nullable|string|max:255',
                 'name' => 'nullable|string|max:100',
                 'address' => 'nullable|string|max:100',
-                'nation_id' => 'nullable|number|max:2',
-                'area_id' => 'nullable|number|max:4',
-                'name' => 'nullable|string|max:12',
-                'desc' => 'nullable|string|500',
+                'desc' => 'nullable|string|max:500',
             ]);
         }
         $validator = Validator::make($request->all(), [
-            'email' => 'nullable|string|email|unique:company|max:50',
+            'email' => 'nullable|string|email|unique:company|max:100',
             'slogan'=> 'nullable|string|max:255',
             'name' => 'nullable|string|max:100',
             'address' => 'nullable|string|max:100',
-            'nation_id' => 'nullable|number|max:2',
-            'area_id' => 'nullable|number|max:4',
-            'name' => 'nullable|string|max:12',
-            'desc' => 'nullable|string|500',
+            'desc' => 'nullable|string|max:500',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(),401);
@@ -124,19 +120,21 @@ class EmployerEditProfile extends Controller
             $check = in_array($extension,$allowedfileExtension);
             if($check) {
                 $file_ext = $files->getClientOriginalName();
-                Image::make($files)->resize(300, 300)->save( public_path('uploads/company/'.str_slug($request->company_name,'-').'/'.$filename));
+                $filePath = $files->storeAs('uploads/company/'.str_slug($request->company_name,'-').'',$file_ext, 'public');
+                Image::make($files)->resize(300, 300);
                 $updateProfile->avatar = $file_ext;
             } else {
                 return response()->json(['invalid_file_format'], 422);
             }
         }
+        // storeAs('uploads/company/'.str_slug($request->company_name,'-').'/'.$file_ext)
         if($request->fullname_employer){
-            $validator = Validator::make($request->all(), [
+            $validatora = Validator::make($request->all(), [
                 'email_employer' => 'nullable|string|email|max:50',
                 'fullname_employer' => 'nullable|string|max:100',
                 'phone_num_employer' => 'nullable|string|max:11',
             ]);
-            if ($validator->fails()) {
+            if ($validatora->fails()) {
                 return response()->json($validator->errors(),401);
             }
             $employer = new Employer;
@@ -151,8 +149,9 @@ class EmployerEditProfile extends Controller
                 $check_employer = in_array($extension_employer,$allowedfileExtension);
                 if($check_employer){
                     $file_ext_employer = $avatar_employer->getClientOriginalName();
-                    Image::make($avatar_employer)->resize(300, 300)->save(public_path('uploads/company/'.str_slug($request->company_name,'-').'/'.str_slug($request->fullname,'-').'/'.$filename));
-                    $employer->phone_num = $file_ext_employer;
+                    $filePath = $avatar_employer->storeAs('uploads/company/'.str_slug($request->company_name,'-').'/'.str_slug($request->fullname,'-').'',$file_ext_employer, 'public');
+                    Image::make($avatar_employer)->resize(300, 300);
+                    $employer->avatar = $file_ext_employer;
                     $employer->save();
                 }else{
                     return response()->json(['invalid_file_format'], 422);

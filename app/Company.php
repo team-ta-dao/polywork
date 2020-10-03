@@ -4,6 +4,7 @@ namespace App;
 
 use App\Employer;
 use App\Job_category;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -20,7 +21,7 @@ class Company extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'email','password', 'name', 'address','cover_img','desc','slogan','id'
+        'email','nation_id','jc_id','area_id','as_id','password', 'name', 'address','cover_img','desc','slogan','id'
     ];
 
     /**
@@ -58,5 +59,14 @@ class Company extends Authenticatable implements JWTSubject
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordRequestEmployer($token));
+    }
+    public function getDetail($id){
+        $company = DB::table('company')->where('company.id',$id)
+        ->join('nation','nation.id','=','company.nation_id')
+        ->join('district' ,'district.id','=','company.area_id')
+        ->join('job_category','job_category.id','=','company.jc_id')
+        ->select('company.email','company.avatar','company.name','company.slogan','company.address','company.desc', 'nation.*', 'district.*','job_category.*')
+        ->get();
+        return $company;
     }
 }

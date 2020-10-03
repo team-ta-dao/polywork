@@ -28,7 +28,9 @@ class StudentEditProfile extends Controller
     {
         //
         if(Auth::check()){
-            return response()->json(['status'=>true,'response'=>Auth::user(),'message'=>'check-sucsecc'],200);
+            $student = new Student;
+            $output = $student->getDetail(Auth::user()->id);
+            return response()->json(['status'=>true,'response'=>$output,'message'=>'check-sucsecc'],200);
         }
     }
 
@@ -106,7 +108,7 @@ class StudentEditProfile extends Controller
         $updateProfile->fullname = $request->fullname;
         $updateProfile->email = $request->email;
         $updateProfile->bio = $request->bio;
-        $updateProfile->address = $request->phone_num;
+        $updateProfile->address = $request->address;
         $updateProfile->phone_num = $request->phone_num;
         if($request->hasFile('file')) {
             $allowedfileExtension=['pdf','jpg','png','docx','xlsx'];
@@ -131,6 +133,20 @@ class StudentEditProfile extends Controller
                     return response()->json(['invalid_file_format'], 422);
                 }
                 return response()->json(['file_uploaded'], 200);
+            }
+        }
+        if($request->hasFile('avatar')) {
+            $allowedfileExtension=['jpeg','jpg','png'];
+            $files = $request->file('avatar'); 
+            $extension = $files->getClientOriginalExtension();
+            $check = in_array($extension,$allowedfileExtension);
+            if($check) {
+                $file_ext = $files->getClientOriginalName();
+                $filePath = $files->storeAs('uploads/company/'.str_slug($request->company_name,'-').'',$file_ext, 'public');
+                Image::make($files)->resize(300, 300);
+                $updateProfile->avatar = $file_ext;
+            } else {
+                return response()->json(['invalid_file_format'], 422);
             }
         }
         if($updateProfile->save()){
