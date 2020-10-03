@@ -77,17 +77,13 @@ class LoginController extends Controller
     }
     public function changePassword(Request $request)
     {
-        $email = $request->email;
-        $employer = Company::query()->where('email',$email)->first();
-        if(empty($employer)){
-            return response()->json(['error' => 'Vui Lòng kiểm tra lại Email của bạn'], 401);
-        }
-        $password = $request->password;
-        if(Hash::check($password, $admin->password)){
+        $company_id = Auth::user()->id;
+        $company = Company::query()->where('id',$company_id)->first();
+        if(Hash::check($request->password, $company->password)){
             if($request->password_new  == $request->password_confirm){
-                $updateEmployer = Company::find($admin->id);
-                $updateEmployer->password = Hash::make($request->password_new);
-                $updateEmployer->save();
+                $updatePasswordCompany = Student::find($company_id);
+                $updatePasswordCompany->password = Hash::make($request->password_new);
+                $updatePasswordCompany->save();
                 return response()->json(['success' => 'Thay đổi mật khẩu thành công'], 200);
             }else{
                 return response()->json(['error' => 'Mật khẩu không giống nhau'], 401);
@@ -95,6 +91,12 @@ class LoginController extends Controller
         }else{
             return response()->json(['error' => 'Mật khẩu của bạn không đúng'], 401);
         }
+    }
+    public function getAuthenticatedUser()
+    {
+    if(Auth::check()){
+        return response()->json(['status'=>true,'response'=>Auth::user(),'message'=>'check-sucsecc'],200);
+    }
     }
 }
     

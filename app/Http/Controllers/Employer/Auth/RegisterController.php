@@ -123,11 +123,11 @@ class RegisterController extends Controller
               if($admin->save()) {
                   // Insert thành công sẽ hiển thị thông báo
                   Session::flash('success', 'Đăng ký thành viên thành công!');
-                  return redirect('');
+                  return redirect('/company');
                   } else {
                   // Insert thất bại sẽ hiển thị thông báo lỗi
                   Session::flash('error', 'Đăng ký thành viên thất bại!');
-                  return redirect('');
+                  return redirect('/company');
                   }
           }
     }

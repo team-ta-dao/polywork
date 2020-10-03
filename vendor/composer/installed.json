@@ -1232,6 +1232,7 @@
         ]
     },
     {
+<<<<<<< HEAD
         "name": "intervention/image",
         "version": "2.5.1",
         "version_normalized": "2.5.1.0",
@@ -1304,6 +1305,8 @@
         ]
     },
     {
+=======
+>>>>>>> student_multiple_upload_cv
         "name": "laravel-frontend-presets/tailwindcss",
         "version": "4.2.0",
         "version_normalized": "4.2.0.0",
@@ -8035,6 +8038,7 @@
             "check",
             "validate"
         ]
+<<<<<<< HEAD
     },
     {
         "name": "yajra/laravel-datatables-oracle",
@@ -8118,5 +8122,7 @@
                 "type": "patreon"
             }
         ]
+=======
+>>>>>>> student_multiple_upload_cv
     }
 ]
