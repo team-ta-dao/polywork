@@ -21,7 +21,7 @@ Route::group(['prefix' => 'student','namespace'=>'Student','middleware' => ['ass
     /*============STUDENTS_GET_PROFILE============*/
     Route::get('/profile', 'StudentEditProfile@index');
     /*============STUDENTS_EDIT_PROFILE============*/
-    Route::post('/editprofile', 'StudentEditProfile@update');
+    Route::post('/profile', 'StudentEditProfile@update');
     /*============STUDENTS_CHANGE_PASSWORD_IS_LOGIN============*/
     Route::post('/changepassword', 'StudentLogin@UserisRessetPassword');
 }); 

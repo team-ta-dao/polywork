@@ -62,9 +62,9 @@ class Company extends Authenticatable implements JWTSubject
     }
     public function getDetail($id){
         $company = DB::table('company')->where('company.id',$id)
-        ->join('nation','nation.id','=','company.nation_id')
-        ->join('district' ,'district.id','=','company.area_id')
-        ->join('job_category','job_category.id','=','company.jc_id')
+        ->leftJoin('nation','nation.id','=','company.nation_id')
+        ->leftJoin('district' ,'district.id','=','company.area_id')
+        ->leftJoin('job_category','job_category.id','=','company.jc_id')
         ->select('company.email','company.avatar','company.name','company.slogan','company.address','company.desc', 'nation.*', 'district.*','job_category.*')
         ->get();
         return $company;

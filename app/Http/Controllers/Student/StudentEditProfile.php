@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 
 class StudentEditProfile extends Controller
@@ -110,31 +111,6 @@ class StudentEditProfile extends Controller
         $updateProfile->bio = $request->bio;
         $updateProfile->address = $request->address;
         $updateProfile->phone_num = $request->phone_num;
-        if($request->hasFile('file')) {
-            $allowedfileExtension=['pdf','jpg','png','docx','xlsx'];
-            $files = $request->file('file'); 
-            $errors = [];
-            foreach ($files as $file) {      
-                $extension = $file->getClientOriginalExtension();
-                $check = in_array($extension,$allowedfileExtension);
-                if($check) {
-                    foreach($request->file as $mediaFiles) {
-                        $file = new CV();
-                        $file_ext = $mediaFiles->getClientOriginalName();
-                        $file_no_ext = pathinfo($file_ext, PATHINFO_FILENAME);
-                        $filePath = $mediaFiles->storeAs('uploads/cv/'.Auth::user()->student_code.'', $file_ext, 'public');
-                        $mFiles = $file_no_ext . '-' . uniqid() . '.' . $extension;
-                        $file->title = $file_no_ext;
-                        $file->slug = $filePath;
-                        $file->student_id = Auth::user()->id;
-                        $file->save();
-                    }
-                } else {
-                    return response()->json(['invalid_file_format'], 422);
-                }
-                return response()->json(['file_uploaded'], 200);
-            }
-        }
         if($request->hasFile('avatar')) {
             $allowedfileExtension=['jpeg','jpg','png'];
             $files = $request->file('avatar'); 
@@ -142,13 +118,18 @@ class StudentEditProfile extends Controller
             $check = in_array($extension,$allowedfileExtension);
             if($check) {
                 $file_ext = $files->getClientOriginalName();
-                $filePath = $files->storeAs('uploads/company/'.str_slug($request->company_name,'-').'',$file_ext, 'public');
+                $images = '/storage/uploads/cv/'.Auth::user()->student_code.'/'.$file_ext;
+                $path = str_replace('\\','/',public_path());
+                if(!file_exists($path.$images)){
+                $filePath = $files->storeAs('uploads/cv/'.Auth::user()->student_code.'', $file_ext, 'public');
                 Image::make($files)->resize(300, 300);
                 $updateProfile->avatar = $file_ext;
+                }
             } else {
                 return response()->json(['invalid_file_format'], 422);
             }
         }
+        $this->multiUploadCv($request);
         if($updateProfile->save()){
             return response()->json(['success' => 'success update profile'], 200);
         }else{
@@ -165,5 +146,39 @@ class StudentEditProfile extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function multiUploadCv(Request $request){
+        if($request->hasFile('file')) {
+            $allowedfileExtension=['pdf','jpg','png','docx','xlsx'];
+            $files = $request->file('file'); 
+            $errors = [];
+            foreach ($files as $file) {      
+                $extension = $file->getClientOriginalExtension();
+                $check = in_array($extension,$allowedfileExtension);
+                if($check) {
+                    foreach($request->file as $mediaFiles) {
+                        $file_ext = $mediaFiles->getClientOriginalName();
+                        $file_no_ext = pathinfo($file_ext, PATHINFO_FILENAME);
+                        $images = '/storage/uploads/cv/'.Auth::user()->student_code.'/'.$file_ext;
+                        $path = str_replace('\\','/',public_path());
+                        if(!file_exists($path.$images)){
+                        $filePath = $mediaFiles->storeAs('uploads/cv/'.Auth::user()->student_code.'', $file_ext, 'public');
+                        $employer = CV::updateOrCreate([
+                            'id' => $request->cv_id,
+                            'student_id' =>  Auth::user()->id
+                        ],[
+                            'title'=>$file_no_ext,
+                            'slug' =>$filePath
+                        ]);
+                        }else{
+                            return response()->json(['file_exist'], 422);
+                        }
+                    }
+                } else {
+                    return response()->json(['invalid_file_format'], 422);
+                }
+                return response()->json(['file_uploaded'], 200);
+            }
+        }
     }
 }

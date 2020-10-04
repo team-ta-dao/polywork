@@ -120,44 +120,18 @@ class EmployerEditProfile extends Controller
             $check = in_array($extension,$allowedfileExtension);
             if($check) {
                 $file_ext = $files->getClientOriginalName();
+                $images = 'uploads/company/'.str_slug($request->company_name,'-').'/'.$file_ext;
+                $path = str_replace('\\','/',public_path());
+                if(!file_exists($path.$images)){
                 $filePath = $files->storeAs('uploads/company/'.str_slug($request->company_name,'-').'',$file_ext, 'public');
                 Image::make($files)->resize(300, 300);
                 $updateProfile->avatar = $file_ext;
+                }
             } else {
                 return response()->json(['invalid_file_format'], 422);
             }
         }
-        // storeAs('uploads/company/'.str_slug($request->company_name,'-').'/'.$file_ext)
-        if($request->fullname_employer){
-            $validatora = Validator::make($request->all(), [
-                'email_employer' => 'nullable|string|email|max:50',
-                'fullname_employer' => 'nullable|string|max:100',
-                'phone_num_employer' => 'nullable|string|max:11',
-            ]);
-            if ($validatora->fails()) {
-                return response()->json($validator->errors(),401);
-            }
-            $employer = new Employer;
-            $employer->company_id = Auth::user()->id;
-            $employer->fullname = $request->fullname_employer;
-            $employer->email = $request->email_employer;
-            $employer->phone_num = $request->phone_num_employer;
-            if($request->hasFile('avatar_employer')){
-                $avatar_employer = $request->file('avatar_employer');
-                $allowedfileExtension=['jpeg','jpg','png'];
-                $extension_employer = $avatar_employer->getClientOriginalExtension();
-                $check_employer = in_array($extension_employer,$allowedfileExtension);
-                if($check_employer){
-                    $file_ext_employer = $avatar_employer->getClientOriginalName();
-                    $filePath = $avatar_employer->storeAs('uploads/company/'.str_slug($request->company_name,'-').'/'.str_slug($request->fullname,'-').'',$file_ext_employer, 'public');
-                    Image::make($avatar_employer)->resize(300, 300);
-                    $employer->avatar = $file_ext_employer;
-                    $employer->save();
-                }else{
-                    return response()->json(['invalid_file_format'], 422);
-                }
-            }
-        }
+        $this->updateEmployer($request);
         if($updateProfile->save()){
             return response()->json(['success' => 'success update profile'], 200);
         }else{
@@ -174,5 +148,44 @@ class EmployerEditProfile extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function updateEmployer(Request $request){
+        if($request->fullname_employer){
+            $validatora = Validator::make($request->all(), [
+                'email_employer' => 'nullable|string|email|max:50',
+                'fullname_employer' => 'nullable|string|max:100',
+                'phone_num_employer' => 'nullable|string|max:11',
+            ]);
+            if ($validatora->fails()) {
+                return response()->json($validator->errors(),401);
+            }
+            if($request->hasFile('avatar_employer')){
+                $avatar_employer = $request->file('avatar_employer');
+                $allowedfileExtension=['jpeg','jpg','png'];
+                $extension_employer = $avatar_employer->getClientOriginalExtension();
+                $check_employer = in_array($extension_employer,$allowedfileExtension);
+                $file_ext_employer = "";
+                if($check_employer){
+                    $file_ext_employer = $avatar_employer->getClientOriginalName();
+                    $images_ext_employer = 'uploads/company/'.str_slug($request->company_name,'-').'/'.$file_ext_employer;
+                    $path_avatar = str_replace('\\','/',public_path());
+                    if(!file_exists($path_avatar.$images_ext_employer)){
+                    $filePath = $avatar_employer->storeAs('uploads/company/'.str_slug($request->company_name,'-').'/'.str_slug($request->fullname,'-').'',$file_ext_employer, 'public');
+                    Image::make($avatar_employer)->resize(300, 300);
+                    }
+                }else{
+                    return response()->json(['invalid_file_format'], 422);
+                }
+                $employer = Employer::updateOrCreate([
+                    'id' => $request->employer_id,
+                    'company_id' =>  Auth::user()->id
+                ],[
+                    'fullname'=>$request->fullname_employer,
+                    'email' =>$request->email_employer,
+                    'phong_num' =>$request->phone_num_employer,
+                    'avatar' =>$file_ext_employer
+                ]);
+            }
+        }
     }
 }
