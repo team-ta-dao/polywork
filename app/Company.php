@@ -51,6 +51,10 @@ class Company extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Job_category::class, 'jc_id');
     }
+    public function EmployerIsCompany()
+    {
+        return $this->hasOne(Employer::class);
+    }
     
     public function getJWTCustomClaims()
     {
@@ -59,14 +63,5 @@ class Company extends Authenticatable implements JWTSubject
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordRequestEmployer($token));
-    }
-    public function getDetail($id){
-        $company = DB::table('company')->where('company.id',$id)
-        ->leftJoin('nation','nation.id','=','company.nation_id')
-        ->leftJoin('district' ,'district.id','=','company.area_id')
-        ->leftJoin('job_category','job_category.id','=','company.jc_id')
-        ->select('company.email','company.avatar','company.name','company.slogan','company.address','company.desc', 'nation.*', 'district.*','job_category.*')
-        ->get();
-        return $company;
     }
 }

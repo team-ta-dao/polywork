@@ -2,6 +2,9 @@
 
 namespace App;
 
+use App\CV;
+use App\Skill_tag;
+use App\Traits\SearchJob;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -11,6 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Student extends Authenticatable implements JWTSubject
 {
     use Notifiable;
+    use SearchJob;
     protected $table = 'student';
     /**
      * The attributes that are mass assignable.
@@ -44,13 +48,10 @@ class Student extends Authenticatable implements JWTSubject
     {
         return [];
     }
-    public function getDetail($id){
-        $student = DB::table('student')->where('student.id',$id)
-        ->leftJoin('job_level','job_level.id','=','student.jl_id')
-        ->leftJoin('district' ,'district.id','=','student.area_id')
-        ->leftJoin('gender','gender.id','=','student.gender_id')
-        ->select('student.email','student.fullname','student.student_code','student.bio','student.dob','student.address','student.phone_num', 'job_level.*', 'district.*','gender.*')
-        ->get();
-        return $student;
+    public function student_skill(){
+        return $this->belongsToMany(Skill_tag::class);
+    }
+    public function student_cv(){
+        return $this->hasMany(CV::class);
     }
 }

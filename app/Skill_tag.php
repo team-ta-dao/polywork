@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Student;
 use App\Job_category;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,5 +15,8 @@ class Skill_tag extends Model
     ]; 
     public function TagOfCategory(){
         return $this->belongsTo(Job_category::class, 'jc_id','id');
+    }
+    public function skill_student(){
+        return $this->belongsToMany(Student::class);
     }
 }
