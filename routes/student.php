@@ -25,7 +25,7 @@ Route::group(['prefix' => 'student','namespace'=>'Student','middleware' => ['ass
     /*============STUDENTS_CHANGE_PASSWORD_IS_LOGIN============*/
     
     Route::resource('/profile', 'StudentEditProfile')->only([
-        'index','store'
+        'index','store','destroy'
     ]);
     
     Route::post('/changepassword', 'StudentLogin@UserisRessetPassword');

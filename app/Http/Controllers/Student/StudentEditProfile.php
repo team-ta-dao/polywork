@@ -148,7 +148,7 @@ class StudentEditProfile extends Controller
      */
     public function destroy($id)
     {
-        //
+        $student = Student::findOrFail(Auth::user()->id)->student_skill()->detach($id);
     }
     public function multiUploadCv(Request $request){
         if($request->hasFile('file')) {
