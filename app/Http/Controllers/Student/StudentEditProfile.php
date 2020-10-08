@@ -6,6 +6,7 @@ use App\CV;
 use Validator;
 use App\Student;
 use App\Skill_tag;
+use App\Pet_project;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -30,9 +31,8 @@ class StudentEditProfile extends Controller
     
     public function index()
     {
-        //
         if(Auth::check()){
-            $student = Student::with('student_skill')->with('student_cv')->where('id', '=', Auth::user()->id)->get();
+            $student = Student::with('student_skill')->with('student_cv')->with('student_pet_project')->where('id', '=', Auth::user()->id)->get();
             return response()->json(['status'=>true,'response'=>$student,'message'=>'check-sucsecc'],200);
         }
     }
@@ -88,10 +88,10 @@ class StudentEditProfile extends Controller
             $check = in_array($extension,$allowedfileExtension);
             if($check) {
                 $file_ext = $files->getClientOriginalName();
-                $images = '/storage/uploads/cv/'.Auth::user()->student_code.'/'.$file_ext;
+                $images = '/storage/uploads/student/'.Auth::user()->student_code.'/avatar/'.$file_ext;
                 $path = str_replace('\\','/',public_path());
                 if(!file_exists($path.$images)){
-                $filePath = $files->storeAs('uploads/cv/'.Auth::user()->student_code.'', $file_ext, 'public');
+                $filePath = $files->storeAs('uploads/student/'.Auth::user()->student_code.'/avatar', $file_ext, 'public');
                 Image::make($files)->resize(300, 300);
                 $updateProfile->avatar = $file_ext;
                 }
@@ -100,6 +100,7 @@ class StudentEditProfile extends Controller
             }
         }
         $this->multiUploadCv($request);
+        $this->multiUploadPetProject($request);
         if($updateProfile->save()){
             return response()->json(['success' => 'success update profile'], 200);
         }else{
@@ -162,10 +163,10 @@ class StudentEditProfile extends Controller
                     foreach($request->file as $mediaFiles) {
                         $file_ext = $mediaFiles->getClientOriginalName();
                         $file_no_ext = pathinfo($file_ext, PATHINFO_FILENAME);
-                        $images = '/storage/uploads/cv/'.Auth::user()->student_code.'/'.$file_ext;
+                        $images = '/storage/uploads/student/'.Auth::user()->student_code.'/cv/'.$file_ext;
                         $path = str_replace('\\','/',public_path());
                         if(!file_exists($path.$images)){
-                        $filePath = $mediaFiles->storeAs('uploads/cv/'.Auth::user()->student_code.'', $file_ext, 'public');
+                        $filePath = $mediaFiles->storeAs('uploads/student/'.Auth::user()->student_code.'/cv', $file_ext, 'public');
                         $employer = CV::updateOrCreate([
                             'id' => $request->cv_id,
                             'student_id' =>  Auth::user()->id
@@ -181,6 +182,37 @@ class StudentEditProfile extends Controller
                     return response()->json(['File CV không đúng định dạng'], 422);
                 }
                 return response()->json(['file_uploaded'], 200);
+            }
+        }
+    }
+    public function multiUploadPetProject(Request $request){
+        if($request->student_project){
+            // $pet_project = json_decode($request->stdent_project);
+            foreach($request->student_project as $rows){
+                    $allowedfileExtension=['pdf','jpg','png'];
+                    $file_ext_project = '';
+                    if(isset($rows['thum_project'])){
+                    $extension = $rows['thum_project']->getClientOriginalExtension();
+                    $check = in_array($extension,$allowedfileExtension);
+                    if($check){
+                        $file_ext_project = $rows['thum_project']->getClientOriginalName();
+                        $file_no_ext = pathinfo($file_ext_project, PATHINFO_FILENAME);
+                        $images = '/storage/uploads/student/'.Auth::user()->student_code.'/petproject/'.$file_ext_project;
+                        $path = str_replace('\\','/',public_path());
+                        if(!file_exists($path.$images)){
+                        $filePath = $mediaFiles->storeAs('uploads/student/'.Auth::user()->student_code.'/petproject', $file_ext_project, 'public');
+                    }
+                    }
+                    }
+                    $updatePetproject = Pet_project::updateOrCreate([
+                        'id'=> $rows['pet_project_id'],
+                        'student_id' =>  Auth::user()->id
+                    ],[
+                        'name'=> $rows['project_name'],
+                        'description' => $rows['project_description'],
+                        'url' => $rows['project_url'],
+                        'thump' => $file_ext_project
+                    ]);
             }
         }
     }

@@ -4,6 +4,7 @@ namespace App;
 
 use App\CV;
 use App\Skill_tag;
+use App\Pet_project;
 use App\Traits\SearchJob;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -53,5 +54,8 @@ class Student extends Authenticatable implements JWTSubject
     }
     public function student_cv(){
         return $this->hasMany(CV::class);
+    }
+    public function student_pet_project(){
+        return $this->hasMany(Pet_project::class);
     }
 }
