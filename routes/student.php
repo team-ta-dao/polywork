@@ -19,9 +19,14 @@ Route::group(['prefix' => 'student','namespace'=>'Student','middleware' => ['ass
     /*============STUDENTS_LOGOUT============*/
     Route::get('/logout', 'StudentLogin@logout');
     /*============STUDENTS_GET_PROFILE============*/
-    Route::get('/profile', 'StudentEditProfile@index');
+    // Route::get('/profile', 'StudentEditProfile@index');
     /*============STUDENTS_EDIT_PROFILE============*/
-    Route::post('/editprofile', 'StudentEditProfile@update');
+    // Route::post('/profile', 'StudentEditProfile@store');
     /*============STUDENTS_CHANGE_PASSWORD_IS_LOGIN============*/
+    
+    Route::resource('/profile', 'StudentEditProfile')->only([
+        'index','store','destroy'
+    ]);
+    
     Route::post('/changepassword', 'StudentLogin@UserisRessetPassword');
 }); 
