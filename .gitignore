@@ -1,3 +1,12 @@
-*
-!public/
-!.gitignore
+/node_modules
+/public/hot
+/storage/*.key
+/vendor
+.env
+.env.backup
+.phpunit.result.cache
+.gitignore
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
