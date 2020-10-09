@@ -20,6 +20,7 @@
         "laravel/ui": "^2.2",
         "maatwebsite/excel": "^3.1",
         "nesbot/carbon": "^2.39",
+        "nicolaslopezj/searchable": "^1.13",
         "tymon/jwt-auth": "^1.0",
         "yajra/laravel-datatables-oracle": "~9.0"
     },

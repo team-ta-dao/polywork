@@ -4,6 +4,11 @@ namespace App;
 
 use App\CV;
 use App\Skill_tag;
+<<<<<<< HEAD
+=======
+use App\Pet_project;
+use App\Traits\SearchJob;
+>>>>>>> 207b7a2ab554b33ad4c69baae987b805a1fb10c8
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -32,7 +37,26 @@ class Student extends Authenticatable implements JWTSubject
     protected $hidden = [
         'remember_token','password'
     ];
-
+    protected $searchable = [
+        /**
+         * Columns and their priority in search results.
+         * Columns with higher values are more important.
+         * Columns with equal values have equal importance.
+         *
+         * @var array
+         */
+        'columns' => [
+            'users.first_name' => 10,
+            'users.last_name' => 10,
+            'users.bio' => 2,
+            'users.email' => 5,
+            'posts.title' => 2,
+            'posts.body' => 1,
+        ],
+        'joins' => [
+            'posts' => ['users.id','posts.user_id'],
+        ],
+    ];
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -53,4 +77,11 @@ class Student extends Authenticatable implements JWTSubject
     public function student_cv(){
         return $this->hasMany(CV::class);
     }
+<<<<<<< HEAD
 }
+=======
+    public function student_pet_project(){
+        return $this->hasMany(Pet_project::class);
+    }
+}
+>>>>>>> 207b7a2ab554b33ad4c69baae987b805a1fb10c8
