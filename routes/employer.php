@@ -24,7 +24,7 @@ Route::group(['prefix' => 'employer','namespace'=>'Employer','middleware' => ['a
     /*============EMPLOYER_LOGOUT============*/
     Route::get('/logout', 'Auth\LogoutController@logout');
     /*============EMPLOYER_GET_PROFILE============*/
-    // Route::get('/profile', 'EmployerEditProfile@index');
+    Route::get('/profile', 'EmployerEditProfile@index');
     // /*============EMPLOYER_EDIT_PROFILE============*/
     // Route::post('/profile', 'EmployerEditProfile@update');
     Route::resource('/profile', 'EmployerEditProfile')->only([

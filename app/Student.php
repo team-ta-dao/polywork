@@ -4,8 +4,11 @@ namespace App;
 
 use App\CV;
 use App\Skill_tag;
+<<<<<<< HEAD
+=======
 use App\Pet_project;
 use App\Traits\SearchJob;
+>>>>>>> 207b7a2ab554b33ad4c69baae987b805a1fb10c8
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -15,7 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Student extends Authenticatable implements JWTSubject
 {
     use Notifiable;
-    use SearchJob;
+    // use SearchJob;
     protected $table = 'student';
     /**
      * The attributes that are mass assignable.
@@ -74,7 +77,11 @@ class Student extends Authenticatable implements JWTSubject
     public function student_cv(){
         return $this->hasMany(CV::class);
     }
+<<<<<<< HEAD
+}
+=======
     public function student_pet_project(){
         return $this->hasMany(Pet_project::class);
     }
 }
+>>>>>>> 207b7a2ab554b33ad4c69baae987b805a1fb10c8
