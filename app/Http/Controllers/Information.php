@@ -7,9 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class Information extends Controller
 {
-    //
+    
     public function sendAllArea(){
         $output = DB::table("area")->get();
+        return response()->json(['response'=>$output]);
+    }
+    public function sendAllDistrict(){
+        $output = DB::table("district")->get();
         return response()->json(['response'=>$output]);
     }
 }

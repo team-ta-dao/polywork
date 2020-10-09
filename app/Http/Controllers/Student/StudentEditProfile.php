@@ -61,7 +61,7 @@ class StudentEditProfile extends Controller
             'fullname' => 'nullable|string|max:100',
             'address' => 'nullable|string|max:100',
             'phone_num' => 'nullable|string|max:12',
-            'dob' => 'date'
+            'dob' => 'nullable|date'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(),401);
@@ -73,11 +73,11 @@ class StudentEditProfile extends Controller
         $updateProfile->address = $request->address;
         $updateProfile->phone_num = $request->phone_num;
         $updateProfile->dob = $request->dob;
-        if(isset($request->skill_tag)){
-            foreach($request->skill_tag as $row){
-               $check = Student::findOrFail(Auth::user()->id)->student_skill()->where('skill_tag_id','=',$row)->count();
+        if(isset($request->student_skill)){
+            foreach($request->student_skill as $row){
+               $check = Student::findOrFail(Auth::user()->id)->student_skill()->where('skill_tag_id','=',$row['id'])->count();
                 if($check == 0){
-                    $student = Student::findOrFail(Auth::user()->id)->student_skill()->attach($row);
+                    $student = Student::findOrFail(Auth::user()->id)->student_skill()->attach($row['id']);
                 }
             }
         }        

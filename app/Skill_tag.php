@@ -16,7 +16,7 @@ class Skill_tag extends Model
     public function TagOfCategory(){
         return $this->belongsTo(Job_category::class, 'jc_id','id');
     }
-    public function skill_student(){
+    public function student_info(){
         return $this->belongsToMany(Student::class);
     }
 }

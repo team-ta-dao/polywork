@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 /*============STUDENTS============*/    
 /*============STUDENTS_LOGIN============*/
 Route::post('student/login', 'Student\StudentLogin@login');
+Route::post('student/suggestion','Student\SuggestionStudent@Suggestion');
 Route::group(['prefix' => 'student','namespace'=>'Student','middleware' => ['assign.guard:web','jwt.auth']], function(){
     /*============STUDENTS_LOGOUT============*/
     Route::get('/logout', 'StudentLogin@logout');
@@ -27,6 +28,5 @@ Route::group(['prefix' => 'student','namespace'=>'Student','middleware' => ['ass
     Route::resource('/profile', 'StudentEditProfile')->only([
         'index','store','destroy'
     ]);
-    
     Route::post('/changepassword', 'StudentLogin@UserisRessetPassword');
 }); 
