@@ -52,3 +52,7 @@ Route::resource('/category', 'AdminCategoryController');
 Route::namespace('Admin')->prefix('admin')->group(function () {
     Route::resource('/tag', 'AdminTagController');
 });
+
+Route::prefix('post')->group(function(){
+    Route::get('/getOffer', 'Admin\PostController@getOffer');
+});
