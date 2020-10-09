@@ -19,7 +19,7 @@ class PostController extends Controller
      */
     public function addPostView()
     {
-       
+        return view('pages.post.add-new-post');
     }
 
     /**
@@ -32,7 +32,6 @@ class PostController extends Controller
         $job_benefit = JobBenefit::all();
         // $company = Company::find(3);
 
-        echo $job_benefit;
-        // echo json_encode($job_benefit);
+        echo json_encode($job_benefit);
     }
 }

@@ -53,6 +53,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
     Route::resource('/tag', 'AdminTagController');
 });
 
-Route::prefix('post')->group(function(){
-    Route::get('/getOffer', 'Admin\PostController@getOffer');
+Route::namespace('Admin')->prefix('post')->group(function(){
+    Route::get('/getOffer', 'PostController@getOffer');
+    Route::get('/add-new-post', 'PostController@addPostView');
 });
