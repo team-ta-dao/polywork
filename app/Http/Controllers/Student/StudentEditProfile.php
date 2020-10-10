@@ -71,6 +71,10 @@ class StudentEditProfile extends Controller
         $updateProfile->email = $request->email;
         $updateProfile->bio = $request->bio;
         $updateProfile->address = $request->address;
+        $updateProfile->area_id = $request->area_id;
+        $updateProfile->gender_id = $request->gender_id;
+        $updateProfile->district_id = $request->district_id;
+        $updateProfile->jl_id = $request->jl_id;
         $updateProfile->phone_num = $request->phone_num;
         $updateProfile->dob = $request->dob;
         if(isset($request->student_skill)){

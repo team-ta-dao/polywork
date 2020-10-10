@@ -67,6 +67,7 @@ class EmployerEditProfile extends Controller
         $updateProfile = Company::find(Auth::user()->id);
         $updateProfile->nation_id = $request->nation_id;
         $updateProfile->area_id = $request->area_id;
+        $updateProfile->district_id = $request->district_id;
         $updateProfile->jc_id = $request->jc_id;
         $updateProfile->name = $request->name;
         $updateProfile->email = $request->email;
