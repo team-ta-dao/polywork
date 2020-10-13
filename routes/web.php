@@ -27,16 +27,16 @@ Route::get('/home', 'HomeController@index')->name('home');
 // });
 /*============ADMIN============*/
 /*============ADMIN_LOGIN============*/
-Route::get('login', [ 'as' => 'login','prefix' => 'admin', 'uses' => 'Admin\Auth\LoginController@getLogin']);
-Route::post('login', [ 'as' => 'login','prefix' => 'admin', 'uses' => 'Admin\Auth\LoginController@login']);
+Route::get('login', ['as' => 'login', 'prefix' => 'admin', 'uses' => 'Admin\Auth\LoginController@getLogin']);
+Route::post('login', ['as' => 'login', 'prefix' => 'admin', 'uses' => 'Admin\Auth\LoginController@login']);
 /*============ADMIN_REGISTER============*/
-Route::get('register',['as' => 'register','prefix' => 'admin','uses'=> 'Admin\Auth\RegisterController@getRegister']);
-Route::post('register',['as' => 'register','prefix' => 'admin','uses'=> 'Admin\Auth\RegisterController@postRegister']);
+Route::get('register', ['as' => 'register', 'prefix' => 'admin', 'uses' => 'Admin\Auth\RegisterController@getRegister']);
+Route::post('register', ['as' => 'register', 'prefix' => 'admin', 'uses' => 'Admin\Auth\RegisterController@postRegister']);
 /*============ADMIN_LOGOUT============*/
-Route::post('logout', [ 'as' => 'logout','prefix' => 'admin','uses' => 'Admin\Auth\LogoutController@getLogout']);
+Route::post('logout', ['as' => 'logout', 'prefix' => 'admin', 'uses' => 'Admin\Auth\LogoutController@getLogout']);
 /*============ADMIN_CHANGE_PASSWORD============*/
-Route::get('changepassword',['as' => 'changepassword','prefix' => 'admin','uses'=> 'Admin\Auth\LoginController@getChangePassword']);
-Route::post('changepassword',['as' => 'changepassword','prefix' => 'admin','uses'=> 'Admin\Auth\LoginController@changePassword']);
+Route::get('changepassword', ['as' => 'changepassword', 'prefix' => 'admin', 'uses' => 'Admin\Auth\LoginController@getChangePassword']);
+Route::post('changepassword', ['as' => 'changepassword', 'prefix' => 'admin', 'uses' => 'Admin\Auth\LoginController@changePassword']);
 /*============ADMIN_RESET_PASSWORD_WITH_EMAIL============*/
 Route::post('/password/email', 'Admin\Auth\ForgotPasswordController@sendResetLinkEmail')->name('admin.password.email');
 Route::get('/password/reset', 'Admin\Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
@@ -47,13 +47,24 @@ Route::get('/admin/import', 'Admin\AdminImportStudentController@show');
 Route::post('/admin/import', 'Admin\AdminImportStudentController@store');
 /*============ADMIN_CRUD_CATEGORY============*/
 Route::namespace('Admin')->prefix('admin')->group(function () {
-Route::resource('/category', 'AdminCategoryController');
+    Route::resource('/category', 'AdminCategoryController');
 });
 Route::namespace('Admin')->prefix('admin')->group(function () {
     Route::resource('/tag', 'AdminTagController');
 });
 
-Route::namespace('Admin')->prefix('post')->group(function(){
-    Route::get('/getOffer', 'PostController@getOffer');
-    Route::get('/add-new-post', 'PostController@addPostView');
+Route::namespace('Admin')->group(function () {
+    Route::get('post/getOffer', 'PostController@getOffer');
+    Route::get('post/add-new-post', 'PostController@addPostView');
+    Route::post('post/get-company-info', 'PostController@getCompanyInfo');
+});
+
+Route::get('/dashboard', function () {
+    return view('pages.dashboard');
+});
+Route::get('/student/add-new-student', function () {
+    return view('pages.student.add-new-student');
+});
+Route::get('/extensions/categories', function () {
+    return view('pages.category');
 });

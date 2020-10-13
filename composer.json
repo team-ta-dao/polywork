@@ -21,6 +21,7 @@
         "maatwebsite/excel": "^3.1",
         "nesbot/carbon": "^2.39",
         "nicolaslopezj/searchable": "^1.13",
+        "spatie/laravel-searchable": "^1.7",
         "tymon/jwt-auth": "^1.0",
         "yajra/laravel-datatables-oracle": "~9.0"
     },

@@ -21,7 +21,7 @@ class Company extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'email','nation_id','jc_id','area_id','as_id','password', 'name', 'address','cover_img','desc','slogan','id'
+        'email', 'nation_id', 'jc_id', 'area_id', 'as_id', 'password', 'name', 'address', 'cover_img', 'desc', 'slogan', 'id'
     ];
 
     /**
@@ -30,7 +30,7 @@ class Company extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'remember_token','password'
+        'remember_token', 'password'
     ];
 
     public function getJWTIdentifier()
@@ -51,11 +51,14 @@ class Company extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Job_category::class, 'jc_id');
     }
+
+
+
     public function EmployerIsCompany()
     {
         return $this->hasOne(Employer::class);
     }
-    
+
     public function getJWTCustomClaims()
     {
         return [];
@@ -63,5 +66,16 @@ class Company extends Authenticatable implements JWTSubject
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordRequestEmployer($token));
+    }
+
+    /**
+     * get specific category of a company
+     * 
+     * @param void
+     * @return string company_job_category
+     */
+    public function getJobCategoryOfCompany()
+    {
+        return $this->hasOne(Company::class, 'id');
     }
 }

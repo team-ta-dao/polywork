@@ -12,4 +12,9 @@ class Job_category extends Model
     protected $fillable = [
         'name','desc','slug','id'
     ];
+
+    public function getCategoryOfCompany()
+    {
+        return $this->belongsTo(Company::class, 'id');
+    }
 }
