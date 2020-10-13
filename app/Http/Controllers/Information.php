@@ -33,4 +33,12 @@ class Information extends Controller
         $output=  Skill_tag::all();
         return response()->json(['response'=>$output]);
     }
+    public function getAllCategory(){
+        $output=  job_category::all();
+        return response()->json(['response'=>$output]);
+    }
+    public function getAllMajor(){
+        $output = Student_major::all();
+        return response()->json(['response'=>$output]);
+    }
 }

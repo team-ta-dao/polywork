@@ -81,7 +81,8 @@ class StudentEditProfile extends Controller
             $updateProfile->jl_id = $request->student_job_level['id'];
         }
         if (isset($request->student_skill)) {
-            foreach ($request->student_skill as $row) {
+            $student_skill = json_decode($request->student_skill,true);
+            foreach ($student_skill as $row) {
                 $check = Student::findOrFail(Auth::user()->id)->student_skill()->where('skill_tag_id', '=', $row['id'])->count();
                 if ($check == 0) {
                     $student = Student::findOrFail(Auth::user()->id)->student_skill()->attach($row['id']);
