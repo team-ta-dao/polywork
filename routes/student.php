@@ -28,5 +28,6 @@ Route::group(['prefix' => 'student','namespace'=>'Student','middleware' => ['ass
     //     'index','store','destroy'
     // ]);
     Route::post('/upload_project','StudentEditProfile@multiUploadPetProject');
+    Route::post('/upload_cv','StudentEditProfile@multiUploadCv');
     Route::post('/changepassword', 'StudentLogin@UserisRessetPassword');
 }); 

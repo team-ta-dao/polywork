@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Skill_tag;
+use App\Student_major;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

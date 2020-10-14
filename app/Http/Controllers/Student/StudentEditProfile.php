@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Student;
 
 use App\CV;
-use App\Http\Controllers\Controller;
-use App\Pet_project;
+use Validator;
 use App\Student;
+use App\Pet_project;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
-use Validator;
+use Illuminate\Support\Facades\Storage;
 
 class StudentEditProfile extends Controller
 {
@@ -69,29 +70,34 @@ class StudentEditProfile extends Controller
         $updateProfile->email = $request->email;
         $updateProfile->bio = $request->bio;
         $updateProfile->address = $request->address;
-        $updateProfile->area_id = $request->area_id;
-        $updateProfile->gender_id = $request->gender_id;
-        $updateProfile->district_id = $request->district_id;
         $updateProfile->phone_num = $request->phone_num;
         $updateProfile->dob = date_format($date, 'Y/m/d');
-        if ($request->student_major != "") {
-            $updateProfile->student_major_id = $request->student_major['id'];
+        if($request->area_id != null){
+            $getIdArea = DB::table("area")->where('slug','=',$request->area_id)->first();
+            $updateProfile->area_id = $getIdArea->id;
         }
-        if ($request->student_job_level != "") {
-            $updateProfile->jl_id = $request->student_job_level['id'];
+        $updateProfile->gender_id = $request->gender_id;
+        if($request->district_id != null){
+            $getIdDistrict = DB::table("district")->where('slug','=',$request->district_id)->first();
+            $updateProfile->district_id = $getIdDistrict->id;
+        }
+        $updateProfile->phone_num = $request->phone_num;
+        $updateProfile->dob = date_format($date, 'Y/m/d');
+        if (is_string($request->student_major_id)) {
+            $getIdMarjor = DB::table("student_major")->where('slug','=',$request->student_major_id)->first();
+            $updateProfile->student_major_id = $getIdMarjor->id;        
         }
         if (isset($request->student_skill)) {
-            $student_skill = json_decode($request->student_skill,true);
-            foreach ($student_skill as $row) {
+            foreach ($request->student_skill as $row) {
                 $check = Student::findOrFail(Auth::user()->id)->student_skill()->where('skill_tag_id', '=', $row['id'])->count();
                 if ($check == 0) {
                     $student = Student::findOrFail(Auth::user()->id)->student_skill()->attach($row['id']);
                 }
             }
         }
-        if ($request->hasFile('avatar')) {
+        if ($request->hasFile('avatars')) {
             $allowedfileExtension = ['jpeg', 'jpg', 'png'];
-            $files = $request->file('avatar');
+            $files = $request->file('avatars');
             $extension = $files->getClientOriginalExtension();
             $check = in_array($extension, $allowedfileExtension);
             if ($check) {
@@ -107,7 +113,6 @@ class StudentEditProfile extends Controller
                 return response()->json(['File Avatar không đúng định dạng'], 422);
             }
         }
-        $this->multiUploadCv($request);
         if ($updateProfile->save()) {
             return response()->json(['success' => 'success update profile'], 200);
         } else {
@@ -160,21 +165,19 @@ class StudentEditProfile extends Controller
     }
     public function multiUploadCv(Request $request)
     {
-        if ($request->hasFile('student_cv')) {
+        // if ($request->hasFile('student_cv')) {
             $allowedfileExtension = ['pdf', 'jpg', 'png', 'docx', 'xlsx'];
             $files = $request->file('student_cv');
-            $errors = [];
             foreach ($files as $file) {
                 $extension = $file->getClientOriginalExtension();
                 $check = in_array($extension, $allowedfileExtension);
                 if ($check) {
-                    foreach ($request->student_cv as $mediaFiles) {
-                        $file_ext = $mediaFiles->getClientOriginalName();
+                        $file_ext = $file->getClientOriginalName();
                         $file_no_ext = pathinfo($file_ext, PATHINFO_FILENAME);
                         $images = '/storage/uploads/student/' . Auth::user()->student_code . '/cv/' . $file_ext;
                         $path = str_replace('\\', '/', public_path());
                         if (!file_exists($path . $images)) {
-                            $filePath = $mediaFiles->storeAs('uploads/student/' . Auth::user()->student_code . '/cv', $file_ext, 'public');
+                            $filePath = $file->storeAs('uploads/student/' . Auth::user()->student_code . '/cv', $file_ext, 'public');
                             $employer = CV::updateOrCreate([
                                 'id' => $request->cv_id,
                                 'student_id' => Auth::user()->id,
@@ -185,13 +188,12 @@ class StudentEditProfile extends Controller
                         } else {
                             return response()->json(['file_exist'], 422);
                         }
-                    }
                 } else {
                     return response()->json(['File CV không đúng định dạng'], 422);
                 }
                 return response()->json(['file_uploaded'], 200);
             }
-        }
+        // }
     }
     public function multiUploadPetProject(Request $request)
     {
