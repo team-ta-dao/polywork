@@ -85,19 +85,21 @@ class StudentEditProfile extends Controller
         $updateProfile->dob = date_format($date, 'Y/m/d');
         if (is_string($request->student_major_id)) {
             $getIdMarjor = DB::table("student_major")->where('slug','=',$request->student_major_id)->first();
+            if($getIdMarjor){
             $updateProfile->student_major_id = $getIdMarjor->id;        
+            }
         }
-        if (isset($request->student_skill)) {
-            foreach ($request->student_skill as $row) {
+        if (isset($request->student_skills)) {
+            foreach ($request->student_skills as $row) {
                 $check = Student::findOrFail(Auth::user()->id)->student_skill()->where('skill_tag_id', '=', $row['id'])->count();
                 if ($check == 0) {
                     $student = Student::findOrFail(Auth::user()->id)->student_skill()->attach($row['id']);
                 }
             }
         }
-        if ($request->hasFile('avatars')) {
+        if ($request->hasFile('avatar')) {
             $allowedfileExtension = ['jpeg', 'jpg', 'png'];
-            $files = $request->file('avatars');
+            $files = $request->file('avatar');
             $extension = $files->getClientOriginalExtension();
             $check = in_array($extension, $allowedfileExtension);
             if ($check) {
@@ -206,9 +208,8 @@ class StudentEditProfile extends Controller
             return response()->json($validator->errors(), 401);
         }
         $allowedfileExtension = ['jpeg', 'jpg', 'png'];
-        $file_ext_project = "";
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
+        if ($request->hasFile('thumb')) {
+            $file = $request->file('thumb');
             $extension = $file->getClientOriginalExtension();
             $check = in_array($extension, $allowedfileExtension);
             if ($check) {
@@ -220,6 +221,8 @@ class StudentEditProfile extends Controller
                     $filePath = $file->storeAs('uploads/student/' . Auth::user()->student_code . '/petproject', $file_ext_project, 'public');
                 }
             }
+        }else{
+            $file_ext_project = $request->thumb;
         }
         $updatePetproject = Pet_project::updateOrCreate([
             'id' => $request->id,
@@ -227,7 +230,7 @@ class StudentEditProfile extends Controller
         ], [
             'name' => $request->name,
             'description' => $request->description,
-            'url' => $request->url_project,
+            'url' => $request->url,
             'thumb' => $file_ext_project,
         ]);
     }
