@@ -28,6 +28,7 @@ Route::group(['prefix' => 'student','namespace'=>'Student','middleware' => ['ass
     //     'index','store','destroy'
     // ]);
     Route::delete('/delete_project/{id}', 'StudentEditProfile@deleteProject');
+    Route::delete('/delete_cv/{id}', 'StudentEditProfile@deleteCV');
     Route::post('/upload_project','StudentEditProfile@multiUploadPetProject');
     Route::post('/upload_cv','StudentEditProfile@multiUploadCv');
     Route::post('/changepassword', 'StudentLogin@UserisRessetPassword');
