@@ -31,7 +31,7 @@ class EmployerEditProfile extends Controller
     {
         //
         if(Auth::check()){
-            $output = Company::with('EmployerIsCompany')->where('id','=',Auth::user()->id)->get();
+            $output = Company::with('EmployerIsCompany')->with('CategoryCompany')->where('id','=',Auth::user()->id)->get();
             return response()->json(['status'=>true,'response'=>$output,'message'=>'check-sucsecc'],200);
         }
     }
