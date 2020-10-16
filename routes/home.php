@@ -17,4 +17,3 @@ Route::group(['prefix' => 'send','middleware' => 'auth.apikey'], function(){
         /*============SEND_ALL_MAJOR============*/
     Route::post('major','Information@getAllMajor');
 });
-

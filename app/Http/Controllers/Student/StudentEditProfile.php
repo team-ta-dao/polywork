@@ -76,7 +76,7 @@ class StudentEditProfile extends Controller
             $getIdArea = DB::table("area")->where('slug', '=', $request->area_id)->first();
             $updateProfile->area_id = $getIdArea->id;
         }
-        // $updateProfile->gender_id = $request->gender_id;
+        $updateProfile->gender_id = $request->gender_id;
         if ($request->district_id != null) {
             $getIdDistrict = DB::table("district")->where('slug', '=', $request->district_id)->first();
             $updateProfile->district_id = $getIdDistrict->id;
@@ -145,11 +145,10 @@ class StudentEditProfile extends Controller
             } else {
                 return response()->json(['File CV không đúng định dạng'], 422);
             }
-            return response()->json(['file_uploaded'], 200);
         }else{
             $file_ext = $request->file;
         }
-        $employer = CV::updateOrCreate([
+        $CV = CV::updateOrCreate([
             'id' => $request->id,
             'student_id' => Auth::user()->id,
         ], [

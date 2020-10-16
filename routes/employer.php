@@ -26,10 +26,11 @@ Route::group(['prefix' => 'employer','namespace'=>'Employer','middleware' => ['a
     /*============EMPLOYER_GET_PROFILE============*/
     Route::get('/profile', 'EmployerEditProfile@index');
     // /*============EMPLOYER_EDIT_PROFILE============*/
-    // Route::post('/profile', 'EmployerEditProfile@update');
-    Route::resource('/profile', 'EmployerEditProfile')->only([
-        'index','store'
-    ]);
+    Route::post('/profile', 'EmployerEditProfile@store');
+    // Route::resource('/profile', 'EmployerEditProfile')->only([
+    //     'index','store'
+    // ]);
+    Route::post('/upload_banner', 'EmployerEditProfile@upDateCorveImage');
 });
 /*============EMLOYER_RESET_PASSWORD_WITH_EMAIL============*/
 Route::post('employer/password/email', 'Employer\Auth\ForgotPasswordController@sendResetLinkEmail');

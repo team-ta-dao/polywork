@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Skill_tag;
 use App\Student_major;
+use App\Job_category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -36,7 +37,7 @@ class Information extends Controller
         return response()->json(['response'=>$output]);
     }
     public function getAllCategory(){
-        $output=  job_category::all();
+        $output=  Job_category::all();
         return response()->json(['response'=>$output]);
     }
     public function getAllMajor(){

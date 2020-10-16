@@ -74,7 +74,7 @@ class Company extends Authenticatable implements JWTSubject
     // }
     public function CategoryCompany()
     {
-        return $this->hasMany(Job_category::class, 'jc_id');
+        return $this->hasOne(Job_category::class, 'id','jc_id');
     }
     public function EmployerIsCompany()
     {

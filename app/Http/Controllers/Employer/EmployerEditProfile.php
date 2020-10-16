@@ -65,18 +65,34 @@ class EmployerEditProfile extends Controller
             return response()->json($validator->errors(),401);
         }
         $updateProfile = Company::find(Auth::user()->id);
-        $updateProfile->nation_id = $request->nation_id;
-        $updateProfile->area_id = $request->area_id;
-        $updateProfile->district_id = $request->district_id;
-        $updateProfile->jc_id = $request->jc_id;
+        $date = date_create($request->founding);
+        $updateProfile->founding = date_format($date, 'Y/m/d');
+        if ($request->nation_id != null) {
+            $getIdArea = DB::table("nation")->where('slug', '=', $request->nation_id)->first();
+            $updateProfile->nation_id = $getIdArea->id;
+        }
+        if (is_string($request->jc_id)) {
+            $getIdMarjor = DB::table("job_category")->where('slug', '=', $request->jc_id)->first();
+            if ($getIdMarjor) {
+                $updateProfile->jc_id = $getIdMarjor->id;
+            }
+        }
+        if ($request->area_id != null) {
+            $getIdArea = DB::table("area")->where('slug', '=', $request->area_id)->first();
+            $updateProfile->area_id = $getIdArea->id;
+        }
+        if ($request->district_id != null) {
+            $getIdDistrict = DB::table("district")->where('slug', '=', $request->district_id)->first();
+            $updateProfile->district_id = $getIdDistrict->id;
+        }
         $updateProfile->name = $request->name;
         $updateProfile->email = $request->email;
         $updateProfile->slogan = $request->slogan;
         $updateProfile->address = $request->address;
         $updateProfile->desc = $request->desc;
-        if($request->hasFile('avatar')) {
+        if($request->hasFile('avatars')) {
             $allowedfileExtension=['jpeg','jpg','png'];
-            $files = $request->file('avatar'); 
+            $files = $request->file('avatars'); 
             $extension = $files->getClientOriginalExtension();
             $check = in_array($extension,$allowedfileExtension);
             if($check) {
@@ -92,7 +108,16 @@ class EmployerEditProfile extends Controller
                 return response()->json(['invalid_file_format'], 422);
             }
         }
+        $this->updateEmployer($request);
+        if($updateProfile->save()){
+            return response()->json(['success' => 'success update profile'], 200);
+        }else{
+            return response()->json(['error' => 'no success'], 200);
+        }
+    }
+    public function upDateCorveImage(Request $request){
         if($request->hasFile('cover_img')) {
+            $updateProfile = Company::find(Auth::user()->id);
             $allowedfileExtension=['jpeg','jpg','png'];
             $files_cover_img = $request->file('cover_img'); 
             $extension = $files_cover_img->getClientOriginalExtension();
@@ -102,63 +127,19 @@ class EmployerEditProfile extends Controller
                 $images = 'uploads/company/'.str_slug($request->company_name,'-').'/'.$file_ext_cover_img;
                 $path = str_replace('\\','/',public_path());
                 if(!file_exists($path.$images)){
-                $filePath = $files_cover_img->storeAs('uploads/company/'.str_slug($request->company_name,'-').'',$file_ext, 'public');
+                $filePath = $files_cover_img->storeAs('uploads/company/'.str_slug($request->company_name,'-').'',$file_ext_cover_img, 'public');
                 Image::make($files_cover_img)->resize(300, 300);
                 $updateProfile->cover_img = $file_ext_cover_img;
+                if($updateProfile->save()){
+                    return response()->json(['success' => 'success update profile'], 200);
+                }else{
+                    return response()->json(['error' => 'no success'], 200);
+                }
                 }
             } else {
                 return response()->json(['invalid_file_format'], 422);
             }
         }
-        $this->updateEmployer($request);
-        if($updateProfile->save()){
-            return response()->json(['success' => 'success update profile'], 200);
-        }else{
-            return response()->json(['error' => 'no success'], 200);
-        }
-    }
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request)
-    {
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
     public function updateEmployer(Request $request){
         if($request->fullname_employer){
