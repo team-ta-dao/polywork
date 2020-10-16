@@ -16,4 +16,9 @@ Route::group(['prefix' => 'send','middleware' => 'auth.apikey'], function(){
     Route::post('category','Information@getAllCategory');
         /*============SEND_ALL_MAJOR============*/
     Route::post('major','Information@getAllMajor');
+            /*============SEACH_BY_TAG============*/
+    Route::get('tag/{slug}','SearchByAuthLogin@searchBySkillTag');
+      /*============SEACH_BY_CATEGORY============*/
+    Route::get('cate/{slug}','SearchByAuthLogin@searchByCategory');
+    Route::post('fulltext','SearchByAuthLogin@searchFullText');
 });

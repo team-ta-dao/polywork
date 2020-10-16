@@ -38,31 +38,6 @@ class Company extends Authenticatable implements JWTSubject
     {
         return $this->getKey();
     }
-    protected $searchable = [
-        /**
-         * Columns and their priority in search results.
-         * Columns with higher values are more important.
-         * Columns with equal values have equal importance.
-         *
-         * @var array
-         */ 
-        'columns' => [
-            'company.name'=>10,
-            'job_level.name' => 10,
-            'job_category.name' => 10,
-            'skill_tag.name' => 10,
-            'area.area_name' => 10,
-            'job_post.jp_title' => 10,
-            'job_post.jp_desc' => 10,
-        ],
-        'joins' => [
-            'company'=>['company.id','job_post.company_id'],
-            'job_level'=>['job_post.jl_id','job_level.id'],
-            'skill_tag'=>['job_post.jt_id','skill_tag.id'],
-            'job_category'=>['job_post.jc_id','job_category.id'],
-            'area'=>['area.id','job_post.jp_location'],
-        ],
-    ];
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
