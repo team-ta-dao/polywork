@@ -76,7 +76,7 @@ class StudentEditProfile extends Controller
             $getIdArea = DB::table("area")->where('slug', '=', $request->area_id)->first();
             $updateProfile->area_id = $getIdArea->id;
         }
-        // $updateProfile->gender_id = $request->gender_id;
+        $updateProfile->gender_id = $request->gender_id;
         if ($request->district_id != null) {
             $getIdDistrict = DB::table("district")->where('slug', '=', $request->district_id)->first();
             $updateProfile->district_id = $getIdDistrict->id;
@@ -139,22 +139,22 @@ class StudentEditProfile extends Controller
                 $path = str_replace('\\', '/', public_path());
                 if (!file_exists($path . $images)) {
                     $filePath = $file->storeAs('uploads/student/' . Auth::user()->student_code . '/cv', $file_ext, 'public');
-                    $employer = CV::updateOrCreate([
-                        'id' => $request->id,
-                        'student_id' => Auth::user()->id,
-                    ], [
-                        'title' => $request->name,
-                        'slug' => $file_ext,
-                    ]);
                 } else {
                     return response()->json(['file_exist'], 422);
                 }
             } else {
                 return response()->json(['File CV không đúng định dạng'], 422);
             }
-            return response()->json(['file_uploaded'], 200);
+        }else{
+            $file_ext = $request->file;
         }
-
+        $CV = CV::updateOrCreate([
+            'id' => $request->id,
+            'student_id' => Auth::user()->id,
+        ], [
+            'title' => $request->name,
+            'slug' => $file_ext,
+        ]);
     }
     public function multiUploadPetProject(Request $request)
     {
@@ -195,6 +195,11 @@ class StudentEditProfile extends Controller
     }
     public function deleteProject($id){
         Pet_project::find($id)->delete();
+        return response()->json(['success' => 'Success delete project'], 200);
+
+    }
+    public function deleteCV($id){
+        CV::find($id)->delete();
         return response()->json(['success' => 'Success delete project'], 200);
 
     }

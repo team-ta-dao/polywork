@@ -2,13 +2,18 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
-
-Route::post('send/area','Information@sendAllArea');
-Route::post('send/district','Information@sendAllDistrict');
-Route::post('send/nation','Information@sendAllNation');
-Route::post('send/tag','Information@getAllTag');
-Route::post('send/category','Information@getAllCategory');
-Route::post('send/major','Information@getAllMajor');
-
+// SET HEADER X-Authorization: dfqRceOMJzOnatZVDmNsPjB1GEe5rZ94XnNkww6UOhPJUHX4ZqnLzp4hAQIa4CIg
+Route::group(['prefix' => 'send','middleware' => 'auth.apikey'], function(){
+        /*============SEND_ALL_AREA============*/
+    Route::post('area','Information@sendAllArea');
+        /*============SEND_ALL_DISTRICT============*/
+    Route::post('district','Information@sendAllDistrict');
+        /*============SEND_ALL_NATION============*/
+    Route::post('nation','Information@sendAllNation');
+        /*============SEND_ALL_TAG============*/
+    Route::post('tag','Information@getAllTag');
+        /*============SEND_ALL_CATEGORY============*/
+    Route::post('category','Information@getAllCategory');
+        /*============SEND_ALL_MAJOR============*/
+    Route::post('major','Information@getAllMajor');
+});
