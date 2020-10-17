@@ -109,8 +109,8 @@ class StudentEditProfile extends Controller
                 if (!file_exists($path . $images)) {
                     $filePath = $files->storeAs('uploads/student/' . Auth::user()->student_code . '/avatar', $file_ext, 'public');
                     Image::make($files)->resize(300, 300);
-                    $updateProfile->avatar = $file_ext;
                 }
+                $updateProfile->avatar = $file_ext;
             } else {
                 return response()->json(['File Avatar không đúng định dạng'], 422);
             }

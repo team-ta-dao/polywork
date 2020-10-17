@@ -7,7 +7,6 @@ use App\Job_level;
 use App\Skill_tag;
 use App\Pet_project;
 use App\Student_major;
-use Nicolaslopezj\Searchable\SearchableTrait;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -18,7 +17,6 @@ class Student extends Authenticatable implements JWTSubject
 {
     use Notifiable;
     // use SearchJob;
-    use SearchableTrait;
     protected $table = 'student';
     /**
      * The attributes that are mass assignable.
