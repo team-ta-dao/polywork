@@ -89,12 +89,10 @@ class StudentEditProfile extends Controller
                 $updateProfile->student_major_id = $getIdMarjor->id;
             }
         }
-        if (isset($request->student_skills)) {
+        $student = Student::findOrFail(Auth::user()->id)->student_skill()->detach();
+        if(!empty($request->student_skills)){
             foreach ($request->student_skills as $row) {
-                $check = Student::findOrFail(Auth::user()->id)->student_skill()->where('skill_tag_id', '=', $row['id'])->count();
-                if ($check == 0) {
-                    $student = Student::findOrFail(Auth::user()->id)->student_skill()->attach($row['id']);
-                }
+            $student = Student::findOrFail(Auth::user()->id)->student_skill()->attach($row['id']);
             }
         }
         if ($request->hasFile('avatar')) {
@@ -181,7 +179,7 @@ class StudentEditProfile extends Controller
                 }
             }
         }else{
-            $file_ext_project = "";
+            $file_ext_project = $request->thumb;
         }
         $updatePetproject = Pet_project::updateOrCreate([
             'id' => $request->id,
