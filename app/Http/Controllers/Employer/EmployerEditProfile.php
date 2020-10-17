@@ -97,10 +97,10 @@ class EmployerEditProfile extends Controller
             $check = in_array($extension,$allowedfileExtension);
             if($check) {
                 $file_ext = $files->getClientOriginalName();
-                $images = 'uploads/company/'.str_slug($request->company_name,'-').'/'.$file_ext;
+                $images = 'uploads/company/'.str_slug($request->name,'-').'/'.$file_ext;
                 $path = str_replace('\\','/',public_path());
                 if(!file_exists($path.$images)){
-                $filePath = $files->storeAs('uploads/company/'.str_slug($request->company_name,'-').'',$file_ext, 'public');
+                $filePath = $files->storeAs('uploads/company/'.str_slug($request->name,'-').'',$file_ext, 'public');
                 Image::make($files)->resize(300, 300);
                 $updateProfile->avatar = $file_ext;
                 }
@@ -124,7 +124,7 @@ class EmployerEditProfile extends Controller
             $check = in_array($extension,$allowedfileExtension);
             if($check) {
                 $file_ext_cover_img = $files_cover_img->getClientOriginalName();
-                $images = 'uploads/company/'.str_slug($request->company_name,'-').'/'.$file_ext_cover_img;
+                $images = 'uploads/company/'.str_slug($request->name,'-').'/'.$file_ext_cover_img;
                 $path = str_replace('\\','/',public_path());
                 if(!file_exists($path.$images)){
                 $filePath = $files_cover_img->storeAs('uploads/company/'.str_slug($request->company_name,'-').'',$file_ext_cover_img, 'public');
