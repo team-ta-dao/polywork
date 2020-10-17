@@ -90,6 +90,7 @@ class EmployerEditProfile extends Controller
         $updateProfile->slogan = $request->slogan;
         $updateProfile->address = $request->address;
         $updateProfile->desc = $request->desc;
+        $updateProfile->slug = str_slug($request->name,'-');
         if($request->hasFile('avatars')) {
             $allowedfileExtension=['jpeg','jpg','png'];
             $files = $request->file('avatars'); 
@@ -114,7 +115,7 @@ class EmployerEditProfile extends Controller
         }else{
             return response()->json(['error' => 'no success'], 200);
         }
-    }
+    }   
     public function upDateCorveImage(Request $request){
         if($request->hasFile('cover_img')) {
             $updateProfile = Company::find(Auth::user()->id);
@@ -124,10 +125,10 @@ class EmployerEditProfile extends Controller
             $check = in_array($extension,$allowedfileExtension);
             if($check) {
                 $file_ext_cover_img = $files_cover_img->getClientOriginalName();
-                $images = 'uploads/company/'.str_slug($request->name,'-').'/'.$file_ext_cover_img;
+                $images = 'uploads/company/'.str_slug($updateProfile->name,'-').'/'.$file_ext_cover_img;
                 $path = str_replace('\\','/',public_path());
                 if(!file_exists($path.$images)){
-                $filePath = $files_cover_img->storeAs('uploads/company/'.str_slug($request->company_name,'-').'',$file_ext_cover_img, 'public');
+                $filePath = $files_cover_img->storeAs('uploads/company/'.str_slug($updateProfile->name,'-').'',$file_ext_cover_img, 'public');
                 Image::make($files_cover_img)->resize(300, 300);
                 $updateProfile->cover_img = $file_ext_cover_img;
                 if($updateProfile->save()){
