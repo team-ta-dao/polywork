@@ -3,9 +3,10 @@
 @section('title','Add New Post')
 
 @section('head-script')
-<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.ckeditor.com/ckeditor5/23.0.0/classic/ckeditor.js"></script>
 <script src="{{ asset('js/job-post/ajax/update-company-card.js') }}"></script>
 <script src="{{ asset('js/job-post/ajax/find-tags.js') }}"></script>
+<script src="{{ asset('js/job-post/get-offer.js') }}"></script>
 @endsection
 
 @section('content')
@@ -28,11 +29,11 @@
 
                     <!--Content-->
                     <label for="job-content" class="block text-gray-700 text-md font-bold mb-2 mt-4">Job Content</label>
-                    <div id="job-content" class="bg-white"></div>
+                    <div id="job-content" class="bg-white max-h-48"></div>
 
                     <!--Require-->
                     <label for="job-require" class="block text-gray-700 text-md font-bold mb-2 mt-4">Job Require</label>
-                    <div id="job-require" class="bg-white h-32"></div>
+                    <div id="job-require" class="bg-white max-h-48 "></div>
 
                     <!--Offer-->
                     <label for="job-offer" class="block text-gray-700 text-md font-bold mb-2 mt-4">Job Offer</label>
@@ -40,11 +41,11 @@
                         <div class="w-1/3">
                             <div class="relative" x-data="{openOffer: false}">
                                 <button @click="openOffer = true" class="py-2 px-4 bg-gray-200 w-full">Choose Offer</button>
-                                <ul x-show="openOffer" @click.away="openOffer = false" class="z-10 absolute t-0 bg-white shadow w-full h-64 overflow-scroll">
+                                <ul id="job-offers" x-show="openOffer" @click.away="openOffer = false" class="z-10 absolute t-0 bg-white shadow w-full h-64 overflow-scroll">
                                     @foreach($jobBenefit as $item)
                                     <li class="p-2">
                                         <label class="inline-flex items-center">
-                                            <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" value="{{ $item->id }}"><span class="ml-2 text-gray-700">{{ $item->name }}</span>
+                                            <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" value="{{ $item->id }}" onchange="test(this)"><span class="ml-2 text-gray-700">{{ $item->name }}</span>
                                         </label>
                                     </li>
                                     @endforeach
@@ -56,35 +57,25 @@
                         </div>
                     </div>
 
-
-                    <!--Title-->
-                    <label for="job-salary" class="block text-gray-700 text-md font-bold mb-2">Salary</label>
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="flex border">
-                            <input type="text" class="appearance-none rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="job-salary">
-                            <select name="currency" id="currency" class="appearance-none rounded-r py-2 px-3 text-gray-700 bg-gray-200 leading-tight focus:outline-none focus:shadow-outline">
-                                <option value="vnd">VND</option>
-                                <option value="usd">USD</option>
-                            </select>
-                        </div>
-
-                        <div class="w-full">
-                            <label class="inline-flex items-center mt-3">
-                                <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" checked><span class="ml-2 text-gray-700">Show Salary</span>
-                            </label>
-                        </div>
-                    </div>
-
                     <!--Job Location-->
                     <label for="job-location" class="block text-gray-700 text-md font-bold mb-2">Job Location</label>
                     <div class="flex items-center border w-full bg-gray-200 rounded-lg">
                         <ion-icon name="location" class="w-5 h-5 mx-4"></ion-icon>
-                        <input type="text" class="appearance-none rounded-r py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full">
+                        <input id="job-location" type="text" class="appearance-none rounded-r py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full">
                     </div>
 
-                    <div class="grid grid-cols-3 gap-4">
-
+                    <!--Time-->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="w-full">
+                            <label for="to-day" class="block text-gray-700 text-md font-bold mb-2">To Day</label>
+                            <div class="flex items-center border w-full bg-gray-200 rounded-lg">
+                                <ion-icon name="calendar" class="w-5 h-5 mx-4"></ion-icon>
+                                <input id="to-day" type="date" class="appearance-none rounded-r py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full">
+                            </div>
+                        </div>
                     </div>
+
+                    <button id="publish" class="w-full mt-6 rounded-lg py-2 px-4 text-center font-semibold text-white bg-orange-400 hover:bg-orange-500">Publish</button>
                 </div>
 
                 <div class="w-full h-full">
@@ -109,27 +100,26 @@
                                     </select>
                                 </div>
                                 <p id="desc" class="text-sm text-gray-600 text-center mt-2">
-                                    13 tuyển dụng tháng này
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                                 </p>
                             </div>
                             <div class="mt-6 pt-3 flex flex-wrap mx-6 border-t" id="">
                                 <div id="job-cat" class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-orange-600 border-orange-500 hover:bg-orange-500 hover:text-orange-100 cursor-default">
                                     User experience
                                 </div>
-
                             </div>
                         </div>
                     </div>
 
                     <!--Job Post Category-->
                     <div id="post-category" class="bg-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-sm rounded-lg shadow-md mx-auto my-4 px-4 py-2">
-                        <h2 class="font-semibold text-lg">Categories</h2>
+                        <h2 class="font-semibold text-lg">Job Categories</h2>
 
-                        <ul id="post-category max-w-32 overflow-scroll">
+                        <ul id="post-category" class="max-w-32 overflow-scroll">
                             @foreach($category as $item)
                             <li class="p-2">
                                 <label class="inline-flex items-center">
-                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" value="{{ $item->id }}"><span class="ml-2 text-gray-700">{{ $item->name }}</span>
+                                    <input type="radio" name="category" class="form-checkbox h-5 w-5 text-gray-600" value="{{ $item->id }}"><span class="ml-2 text-gray-700">{{ $item->name }}</span>
                                 </label>
                             </li>
                             @endforeach
@@ -151,7 +141,7 @@
                             @foreach($jobLevel as $item)
                             <li class="p-2">
                                 <label class="inline-flex items-center">
-                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" value="{{ $item->id }}"><span class="ml-2 text-gray-700">{{ $item->name }}</span>
+                                    <input type="radio" name="job-level" class="form-checkbox h-5 w-5 text-gray-600" value="{{ $item->id }}"><span class="ml-2 text-gray-700">{{ $item->name }}</span>
                                 </label>
                             </li>
                             @endforeach
@@ -167,6 +157,25 @@
                             </ul>
                         </div>
                     </div>
+
+                    <div class="bg-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-sm rounded-lg shadow-md mx-auto my-4 px-4 py-2" id="salary">
+                        <label for="job-salary" class="block text-gray-700 text-md font-bold mb-2">Salary</label>
+                        <div class="grid grid-rows-2">
+                            <div class="flex border">
+                                <input type="text" class="appearance-none rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="job-salary">
+                                <select name="currency" id="currency" class="appearance-none rounded-r py-2 px-3 text-gray-700 bg-gray-200 leading-tight focus:outline-none focus:shadow-outline">
+                                    <option value="vnd">VND</option>
+                                    <option value="usd">USD</option>
+                                </select>
+                            </div>
+
+                            <div class="w-full">
+                                <label class="inline-flex items-center mt-3">
+                                    <input name="is-show-salary" type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" checked><span class="ml-2 text-gray-700">Show Salary</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -177,69 +186,7 @@
 @endsection
 
 @section('footer-script')
-<!-- Include the Quill library -->
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script src="{{ asset('js/job-post/ckeditor.js') }}"></script>
+<script src="{{ asset('js/job-post/ajax/add-new-post.js') }}"></script>
 
-<script>
-    var toolbarOption = [
-        [{
-            'header': [1, 2, 3, 4, 5, 6, false]
-        }],
-        [{
-            'font': []
-        }],
-        ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-        ['blockquote', 'code-block'],
-
-        // [{
-        //     'header': 1
-        // }, {
-        //     'header': 2
-        // }], // custom button values
-        [{
-            'list': 'ordered'
-        }, {
-            'list': 'bullet'
-        }, {
-            'align': []
-        }],
-
-        [{
-            'indent': '-1'
-        }, {
-            'indent': '+1'
-        }], // outdent/indent
-        [{
-            'direction': 'rtl'
-        }], // text direction
-        [{
-            'color': []
-        }, {
-            'background': []
-        }],
-        ['link', 'image', 'video', 'formula']
-    ];
-
-    var editor = ['#job-content', '#job-require'];
-
-    // for (let index = 0; index < editor.length; index++) {
-    //     const element = editor[index];
-    //     var editor = new Quill(element, {
-    //         modules:{
-    //             toolbar: toolbarOption
-    //         },
-    //         theme: 'snow'
-    //     });
-    // }
-
-    var postContent = new Quill('#job-content', {
-        modules: {
-            toolbar: toolbarOption
-        },
-        theme: 'snow'
-    });
-    var postContent = new Quill('#job-require', {
-        theme: 'snow'
-    });
-</script>
 @endsection

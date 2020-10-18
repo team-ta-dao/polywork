@@ -57,6 +57,7 @@ Route::namespace('Admin')->group(function () {
     Route::get('post/getOffer', 'PostController@getOffer');
     Route::get('post/add-new-post', 'PostController@addPostView');
     Route::post('post/get-company-info', 'PostController@getCompanyInfo');
+    Route::post('post/add-new-post', 'PostController@storePost');
 });
 
 Route::get('/dashboard', function () {

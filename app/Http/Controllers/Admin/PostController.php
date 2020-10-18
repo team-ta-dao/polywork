@@ -9,9 +9,11 @@ use App\Job_Benefit;
 use App\Job_category;
 use App\Job_level;
 use App\JobBenefit;
+use App\JobPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Validator;
 
 class PostController extends Controller
 {
@@ -22,7 +24,7 @@ class PostController extends Controller
      */
     public function addPostView()
     {
-        $job_benefit = JobBenefit::all();
+        $job_benefit = DB::table('job_benefit')->get();
         $all_company = DB::table('company')->select('id', 'name')->orderBy('name', 'desc')->get();
         $all_category = Job_category::all();
         $job_level = Job_level::all();
@@ -50,7 +52,25 @@ class PostController extends Controller
         $id = $_POST['companyId'];
 
         $company = Company::find($id);
-        $company_cat = DB::table('company')->where('company.id', $id)->join('job_category', 'company.jc_id', '=', 'job_category.id')->select('company.name', 'company.avatar', 'company.cover_img', 'company.desc', 'job_category.name')->get();
+        $company_cat = DB::table('company')->where('company.id', $id)->join('job_category', 'company.jc_id', '=', 'job_category.id')->select('company.name', 'company.avatar', 'company.cover_img', 'company.desc', 'company.address', 'job_category.name')->get();
         echo $company_cat;
+    }
+
+    protected function storePost(Request $request)
+    {
+        $validatedData = Validator::make($request->all(), [
+            // 'jp_title' => 'required'
+        ]);
+
+        if ($validatedData->passes()) {
+            // JobPost::create($request->all());
+            echo json_encode($request->all());
+        } else {
+            return response()->json(['error'=>$validatedData->errors()->all()]);
+        }
+
+        return json_encode([
+            'status_code' => 200
+        ]);
     }
 }
